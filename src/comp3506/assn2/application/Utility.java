@@ -1,6 +1,53 @@
 package comp3506.assn2.application;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class Utility {
+
+    public static Map<Integer, String> getLines(String documentFileName) throws FileNotFoundException {
+        Map<Integer, String> lines = new ProbeHashMap<>();
+        int lineNumber = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                lines.put(lineNumber, line);
+                lineNumber++;
+            }
+        } catch (IOException ex) {
+            throw new FileNotFoundException(documentFileName);
+        }
+        return lines;
+    }
+
+    public static Map<String, Integer> getWorks(String indexFileName) throws FileNotFoundException {
+        Map<String, Integer> works = new ProbeHashMap<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(indexFileName))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] work = line.split(",");
+                works.put(work[0].trim(), Integer.parseInt(work[1].trim()));
+            }
+        } catch (IOException ex) {
+            throw new FileNotFoundException(indexFileName);
+        }
+        return works;
+    }
+
+    public static ArrayList<String> getStopWords(String stopWordsFileName) throws FileNotFoundException {
+        ArrayList<String> stopWords = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(stopWordsFileName))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                stopWords.add(stopWords.size(), line.trim());
+            }
+        } catch (IOException ex) {
+            throw new FileNotFoundException(stopWordsFileName);
+        }
+        return stopWords;
+    }
 
     public static int findKMP(char[] text, char[] pattern) {
         int n = text.length;

@@ -12,9 +12,13 @@ import java.io.IOException;
  * You must implement the constructor stub below and override the methods from the Search interface
  * so that they call the necessary code in your application.
  * 
- * @author 
+ * @author
  */
 public class AutoTester implements Search {
+
+	Map<String, Integer> works;
+    Map<Integer, String> lines;
+	ArrayList<String> stopWords;
 
 	/**
 	 * Create an object that performs search operations on a document.
@@ -36,25 +40,29 @@ public class AutoTester implements Search {
 		// TODO Implement constructor to load the data from these files and
 		// TODO setup your data structures for the application.
 
+        if (documentFileName != null && documentFileName.length() > 0) {
+            lines = Utility.getLines(documentFileName);
+        } else {
+            throw new IllegalArgumentException();
+        }
 
-		int count =0;
-		try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				if (Utility.findKMP(line.toCharArray(), "there".toCharArray()) >= 0) {
-					count++;
-				}
-			}
-		} catch (IOException ex) {
-			throw new FileNotFoundException(ex.getMessage());
-		}
+        if (indexFileName != null && indexFileName.length() > 0) {
+            works = Utility.getWorks(indexFileName);
+        } else {
+            works = new ProbeHashMap<>();
+            works.put(lines.get(0), 0);
+        }
 
-		System.out.println(count);
-		
+        if (stopWordsFileName != null && stopWordsFileName.length() > 0) {
+            stopWords = Utility.getStopWords(stopWordsFileName);
+        } else {
+            stopWords = new ArrayList<>();
+        }
+
 	}
 
 	public int wordCount(String word) throws IllegalArgumentException {
-		return 0;
+        return 0;
 	}
 	
 	
