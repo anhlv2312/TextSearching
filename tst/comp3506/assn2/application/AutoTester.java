@@ -1,6 +1,9 @@
 package comp3506.assn2.application;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 
 /**
@@ -32,6 +35,27 @@ public class AutoTester implements Search {
 			throws FileNotFoundException, IllegalArgumentException {
 		// TODO Implement constructor to load the data from these files and
 		// TODO setup your data structures for the application.
+
+
+		int count =0;
+		try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				if (Utility.findKMP(line.toCharArray(), "there".toCharArray()) >= 0) {
+					count++;
+				}
+			}
+		} catch (IOException ex) {
+			throw new FileNotFoundException(ex.getMessage());
+		}
+
+		System.out.println(count);
+		
 	}
 
+	public int wordCount(String word) throws IllegalArgumentException {
+		return 0;
+	}
+	
+	
 }

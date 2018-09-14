@@ -1,1 +1,7 @@
 .DS_Store
+/bin/
+/out/
+*.iml
+.idea/
+.classpath
+.project
