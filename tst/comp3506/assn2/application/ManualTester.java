@@ -14,7 +14,15 @@ public class ManualTester {
 		for (String word: words) {
             System.out.println(word + ": " + at.wordCount(word));
         }
-//        System.out.println(at.phraseOccurrence("to be or not to be"));
+
+
+        String phrase = "to be or not to be";
+        java.util.List<Pair<Integer, Integer>> occurences = at.phraseOccurrence(phrase);
+
+		for (Pair<Integer, Integer> occurence: occurences) {
+            System.out.println(occurence.getLeftValue() + " " + occurence.getRightValue());
+        }
+
 
 //        Trie<List<Integer>> trie = new Trie<>();
 //        trie.insert("hello");

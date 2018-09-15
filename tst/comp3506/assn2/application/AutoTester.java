@@ -15,11 +15,10 @@ import java.io.FileNotFoundException;
  */
 public class AutoTester implements Search {
 
-    Map<String, Integer> indexes;
-    Map<Integer, String> lines;
-    List<String> stopWords;
-
-    Trie<List<Pair<Integer, Integer>>> wordIndexes;
+    private Map<String, Integer> indexes;
+    private Map<Integer, String> lines;
+    private List<String> stopWords;
+    private Trie<IndexTable> wordIndexes;
 
     /**
      * Create an object that performs search operations on a document.
@@ -80,7 +79,11 @@ public class AutoTester implements Search {
     }
 
     public int wordCount(String word) throws IllegalArgumentException {
-        List<Pair<Integer, Integer>> wordIndex = wordIndexes.getElement(word.trim().toLowerCase());
+        if (word == null || word.length() == 0) {
+            throw new IllegalArgumentException();
+        }
+
+        IndexTable wordIndex = wordIndexes.getElement(word.trim().toLowerCase());
         if (wordIndex != null) {
             return wordIndex.size();
         } else {
@@ -90,6 +93,26 @@ public class AutoTester implements Search {
 
 
     public java.util.List<Pair<Integer, Integer>> phraseOccurrence(String phrase) throws IllegalArgumentException {
-        return null;
+        if (phrase == null || phrase.length() == 0) {
+            throw new IllegalArgumentException();
+        }
+
+        java.util.List<Pair<Integer, Integer>> result = new java.util.ArrayList<>();
+
+        String pattern = Utility.sanitizeString(phrase);
+        String firstWord = pattern.split(" ")[0];
+
+        IndexTable wordIndex = wordIndexes.getElement(firstWord);
+        for (int lineNumber: wordIndex.getLineNumbers()) {
+            String text = Utility.sanitizeString(lines.get(lineNumber));
+
+            int match = Utility.findKMP(text.toCharArray(), pattern.toCharArray());
+            if (match >= 0) {
+                result.add(new Pair<>(lineNumber, match));
+            }
+        }
+
+        return result;
+
     }
 }
