@@ -55,7 +55,6 @@ public class ProbeHashMap<K, V> extends AbstractHashMap<K, V> {
     }
 
     protected V bucketPut(int h, K k, V v) {
-        System.out.println(n);
         int j = findSlot(h, k);
         if (j >= 0) {
             return table[j].setValue(v);
@@ -80,7 +79,6 @@ public class ProbeHashMap<K, V> extends AbstractHashMap<K, V> {
         ArrayList<Entry<K, V>> buffer = new ArrayList<>();
         for (int h = 0; h < capacity; h++) {
             if (!isAvailable(h)) {
-                System.out.println(table[h].getValue());
                 buffer.add(buffer.size(), table[h]);
             }
         }

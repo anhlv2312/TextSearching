@@ -18,7 +18,7 @@ public class AutoTester implements Search {
 
 	Map<String, Integer> works;
     Map<Integer, String> lines;
-	ArrayList<String> stopWords;
+    List<String> stopWords;
 
 	/**
 	 * Create an object that performs search operations on a document.
@@ -40,17 +40,17 @@ public class AutoTester implements Search {
 		// TODO Implement constructor to load the data from these files and
 		// TODO setup your data structures for the application.
 
-        if (documentFileName != null && documentFileName.length() > 0) {
-            lines = Utility.getLines(documentFileName);
-        } else {
-            throw new IllegalArgumentException();
-        }
-
         if (indexFileName != null && indexFileName.length() > 0) {
             works = Utility.getWorks(indexFileName);
         } else {
             works = new ProbeHashMap<>();
             works.put(lines.get(0), 0);
+        }
+
+        if (documentFileName != null && documentFileName.length() > 0) {
+            lines = Utility.getLines(documentFileName);
+        } else {
+            throw new IllegalArgumentException();
         }
 
         if (stopWordsFileName != null && stopWordsFileName.length() > 0) {
@@ -59,7 +59,20 @@ public class AutoTester implements Search {
             stopWords = new ArrayList<>();
         }
 
-	}
+//        for (String word: stopWords) {
+//            System.out.println(word);
+//        }
+//
+//        for (String line: lines.values()) {
+//            System.out.println(line);
+//        }
+//
+//        for (String work: works.keySet()) {
+//            System.out.println(work);
+//        }
+
+
+    }
 
 	public int wordCount(String word) throws IllegalArgumentException {
         return 0;

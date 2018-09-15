@@ -36,8 +36,8 @@ public class Utility {
         return works;
     }
 
-    public static ArrayList<String> getStopWords(String stopWordsFileName) throws FileNotFoundException {
-        ArrayList<String> stopWords = new ArrayList<>();
+    public static List<String> getStopWords(String stopWordsFileName) throws FileNotFoundException {
+        List<String> stopWords = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(stopWordsFileName))) {
             String line;
             while ((line = br.readLine()) != null) {
