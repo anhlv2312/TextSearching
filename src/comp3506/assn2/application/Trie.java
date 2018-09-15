@@ -10,31 +10,28 @@ public class Trie<T> {
     private TrieNode<T> root;
 
     public Trie() {
-        root = new TrieNode<>((char) 0);
+        root = new TrieNode<>();
     }
 
     public void insert(String word) {
-
         // Find length of the given word
-        int length = word.length();
-        TrieNode<T> crawl = root;
+        TrieNode<T> current = root;
 
         // Traverse through all characters of given word
-        for (int level = 0; level < length; level++) {
-            Map<Character, TrieNode<T>> child = crawl.getChildren();
-            char ch = word.charAt(level);
-
+        for (int i = 0; i < word.length(); i++) {
+            Map<Character, TrieNode<T>> children = current.getChildren();
+            char ch = word.charAt(i);
             // If there is already a child for current character of given word
-            crawl = child.get(ch);
-            if (crawl == null) {
-                TrieNode<T> temp = new TrieNode<T>(ch);
-                child.put(ch, temp);
-                crawl = temp;
+            current = children.get(ch);
+            if (current == null) {
+                TrieNode<T> temp = new TrieNode<>();
+                children.put(ch, temp);
+                current = temp;
             }
         }
 
-        // Set bIsEnd true for last character
-        crawl.setWord();
+        // Set Word Flag is true for last character
+        current.setWord();
     }
 
     private TrieNode<T> findNode(String word) {
@@ -70,13 +67,12 @@ public class Trie<T> {
         }
     }
 
-
     private class TrieNode<E> {
         private Map<Character, TrieNode<E>> children;
         private E element;
         private boolean flag;
 
-        private TrieNode(char ch) {
+        private TrieNode() {
             children = new ProbeHashMap<>();
             flag = false;
             element = null;
@@ -102,8 +98,6 @@ public class Trie<T> {
             this.element = element;
         }
 
-
     }
-
 
 }

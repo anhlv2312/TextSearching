@@ -16,8 +16,10 @@ import java.io.FileNotFoundException;
 public class AutoTester implements Search {
 
     Map<String, Integer> indexes;
-    Map<Integer, Line> lines;
+    Map<Integer, String> lines;
     List<String> stopWords;
+
+    Trie<List<Pair<Integer, Integer>>> wordIndexes;
 
     /**
      * Create an object that performs search operations on a document.
@@ -39,11 +41,18 @@ public class AutoTester implements Search {
         // TODO Implement constructor to load the data from these files and
         // TODO setup your data structures for the application.
 
+
         if (indexFileName != null && indexFileName.length() > 0) {
             indexes = Utility.getIndexes(indexFileName);
         } else {
             indexes = new ProbeHashMap<>();
             indexes.put(null, 0);
+        }
+
+        if (stopWordsFileName != null && stopWordsFileName.length() > 0) {
+            stopWords = Utility.getStopWords(stopWordsFileName);
+        } else {
+            stopWords = new ArrayList<>();
         }
 
         if (documentFileName != null && documentFileName.length() > 0) {
@@ -52,11 +61,8 @@ public class AutoTester implements Search {
             throw new IllegalArgumentException();
         }
 
-        if (stopWordsFileName != null && stopWordsFileName.length() > 0) {
-            stopWords = Utility.getStopWords(stopWordsFileName);
-        } else {
-            stopWords = new ArrayList<>();
-        }
+        wordIndexes = Utility.buildWordIndexes(lines);
+
 
 //        for (String word: stopWords) {
 //            System.out.println(word);
@@ -74,20 +80,16 @@ public class AutoTester implements Search {
     }
 
     public int wordCount(String word) throws IllegalArgumentException {
-        int count = 0;
-        for (Line line : lines.values()) {
-            for (String w : line.getWords()) {
-                if (w.equals(word)) {
-                    count++;
-                }
-            }
+        List<Pair<Integer, Integer>> wordIndex = wordIndexes.getElement(word.trim().toLowerCase());
+        if (wordIndex != null) {
+            return wordIndex.size();
+        } else {
+            return 0;
         }
-        return count;
     }
 
 
     public java.util.List<Pair<Integer, Integer>> phraseOccurrence(String phrase) throws IllegalArgumentException {
-        java.util.List<Pair<Integer, Integer>> result = new java.util.ArrayList<>();
-        return result;
+        return null;
     }
 }

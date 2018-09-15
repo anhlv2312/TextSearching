@@ -1,19 +1,23 @@
 package comp3506.assn2.application;
 
+import comp3506.assn2.utils.Pair;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utility {
 
-    public static Map<Integer, Line> getLines(String documentFileName) throws FileNotFoundException {
-        Map<Integer, Line> lines = new ProbeHashMap<>();
+    public static Map<Integer, String> getLines(String documentFileName) throws FileNotFoundException {
+        Map<Integer, String> lines = new ProbeHashMap<>();
         int lineNumber = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {
             String line;
             while ((line = br.readLine()) != null) {
-                lines.put(lineNumber, new Line(line));
+                lines.put(lineNumber,line);
                 lineNumber++;
             }
         } catch (IOException ex) {
@@ -50,6 +54,33 @@ public class Utility {
         return stopWords;
     }
 
+
+    public static Trie<List<Pair<Integer, Integer>>> buildWordIndexes(Map<Integer, String> lines) {
+        Trie<List<Pair<Integer, Integer>>> wordIndexes = new Trie<>();
+        for (Map.Entry<Integer, String> line : lines.entrySet()) {
+            Map<Integer, String> words = tokenizeLine(line.getValue());
+            for (Map.Entry<Integer, String> word: words.entrySet()) {
+                wordIndexes.insert(word.getValue());
+                List<Pair<Integer, Integer>> wordIndex = wordIndexes.getElement(word.getValue());
+                if (wordIndex == null) {
+                    wordIndex = new ArrayList<>();
+                    wordIndexes.setElement(word.getValue(), wordIndex);
+                }
+                wordIndex.add(wordIndex.size(), new Pair<>(line.getKey(), word.getKey()));
+            }
+        }
+        return wordIndexes;
+    }
+
+    public static Map<Integer, String> tokenizeLine(String line) {
+        Map<Integer, String> words = new ProbeHashMap<>();
+        Pattern pattern = Pattern.compile("[a-zA-Z]+\'?[a-zA-Z]+");
+        Matcher matcher = pattern.matcher(line.toLowerCase());
+        while (matcher.find()) {
+            words.put(matcher.start(), matcher.group());
+        }
+        return words;
+    }
 
     public static int findKMP(char[] text, char[] pattern) {
         int n = text.length;
