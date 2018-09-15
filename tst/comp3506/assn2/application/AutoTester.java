@@ -86,8 +86,8 @@ public class AutoTester implements Search {
     }
 
 
-    public List<Pair<Integer, Integer>> phraseOccurrence(String phrase) throws IllegalArgumentException {
-        List<Pair<Integer, Integer>> result = new ArrayList<>();
+    public java.util.List<Pair<Integer, Integer>> phraseOccurrence(String phrase) throws IllegalArgumentException {
+        java.util.List<Pair<Integer, Integer>> result = new java.util.ArrayList<>();
         return result;
     }
 }
