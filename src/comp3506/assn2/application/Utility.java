@@ -7,13 +7,13 @@ import java.io.IOException;
 
 public class Utility {
 
-    public static Map<Integer, String> getLines(String documentFileName) throws FileNotFoundException {
-        Map<Integer, String> lines = new ProbeHashMap<>();
+    public static Map<Integer, Line> getLines(String documentFileName) throws FileNotFoundException {
+        Map<Integer, Line> lines = new ProbeHashMap<>();
         int lineNumber = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {
             String line;
             while ((line = br.readLine()) != null) {
-                lines.put(lineNumber, line);
+                lines.put(lineNumber, new Line(line));
                 lineNumber++;
             }
         } catch (IOException ex) {
@@ -22,13 +22,14 @@ public class Utility {
         return lines;
     }
 
-    public static Map<String, Integer> getWorks(String indexFileName) throws FileNotFoundException {
+    public static Map<String, Integer> getIndexes(String indexFileName) throws FileNotFoundException {
         Map<String, Integer> works = new ProbeHashMap<>();
         try (BufferedReader br = new BufferedReader(new FileReader(indexFileName))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] work = line.split(",");
-                works.put(work[0].trim(), Integer.parseInt(work[1].trim()));
+                String title = line.split(",")[0].trim();
+                int startLine = Integer.parseInt(line.split(",")[1].trim());
+                works.put(title, startLine);
             }
         } catch (IOException ex) {
             throw new FileNotFoundException(indexFileName);
@@ -49,6 +50,7 @@ public class Utility {
         return stopWords;
     }
 
+
     public static int findKMP(char[] text, char[] pattern) {
         int n = text.length;
         int m = pattern.length;
@@ -58,7 +60,9 @@ public class Utility {
         int k = 0;
         while (j < n) {
             if (text[j] == pattern[k]) {
-                if (k == m - 1) return j - m + 1;
+                if (k == m - 1) {
+                    return j - m + 1;
+                }
                 j++;
                 k++;
             } else if (k > 0) {

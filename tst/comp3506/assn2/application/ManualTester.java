@@ -7,7 +7,8 @@ public class ManualTester {
 				"./files/shakespeare-index.txt",
 				"./files/stop-words.txt");
 
-        at.wordCount("their");
+        System.out.println(at.wordCount("their"));
+        System.out.println(at.phraseOccurrence("to be or not to be"));
 
 	}
 }
