@@ -17,7 +17,7 @@ public class Utility {
         try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {
             String line;
             while ((line = br.readLine()) != null) {
-                line = sanitizeString(line);
+                line = line;
                 if (line.length() > 0) {
                     lines.put(lineNumber, line);
                 }
@@ -49,7 +49,7 @@ public class Utility {
         try (BufferedReader br = new BufferedReader(new FileReader(stopWordsFileName))) {
             String line;
             while ((line = br.readLine()) != null) {
-                stopWords.add(stopWords.size(), line.trim());
+                stopWords.add(line.trim());
             }
         } catch (IOException ex) {
             throw new FileNotFoundException(stopWordsFileName);
@@ -57,28 +57,12 @@ public class Utility {
         return stopWords;
     }
 
-    public static Trie<IndexTable> buildWordIndexes(Map<Integer, String> lines) {
-        Trie<IndexTable> wordIndexes = new Trie<>();
-        for (Map.Entry<Integer, String> line : lines.entrySet()) {
-            Map<Integer, String> tokens = tokenizeString(line.getValue());
-            for (Map.Entry<Integer, String> word: tokens.entrySet()) {
-                wordIndexes.insert(word.getValue());
-                IndexTable wordIndex = wordIndexes.getElement(word.getValue());
-                if (wordIndex == null) {
-                    wordIndex = new IndexTable(word.getValue());
-                    wordIndexes.setElement(word.getValue(), wordIndex);
-                }
-                wordIndex.addPosition(line.getKey(), word.getKey());
-            }
-        }
-        return wordIndexes;
-    }
-
     public static Map<Integer, String> tokenizeString(String string) {
+        string = sanitizeString(string);
         StringBuilder sb = new StringBuilder();
         Map<Integer, String> tokens = new ProbeHashMap<>();
         for (int i = 0; i < string.length(); i++) {
-            if (string.charAt(i) != ' ' ) {
+            if (string.charAt(i) != ' ') {
                 sb.append(string.charAt(i));
             } else {
                 if (sb.length() > 0) {
@@ -86,12 +70,19 @@ public class Utility {
                     sb = new StringBuilder();
                 }
             }
+            if ((i == string.length() - 1) && (sb.length() > 0)) {
+                tokens.put(i - sb.length() + 1, sb.toString());
+            }
         }
         return tokens;
     }
 
     public static String sanitizeString(String string) {
         return string.toLowerCase().replaceAll("[^0-9a-z ']"," ").replaceAll("' | '","  ");
+    }
+
+    public static String removeContinuousSpaces(String string) {
+        return string.toLowerCase().replaceAll(" +"," ").trim();
     }
 
     public static int findKMP(char[] text, char[] pattern) {

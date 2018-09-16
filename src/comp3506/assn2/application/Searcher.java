@@ -19,7 +19,7 @@ public class Searcher {
             indexes = Utility.getIndexes(indexFileName);
         } else {
             indexes = new ProbeHashMap<>();
-            indexes.put(null, 0);
+            indexes.put("", 0);
         }
 
         if (stopWordsFileName != null && stopWordsFileName.length() > 0) {
@@ -34,8 +34,33 @@ public class Searcher {
             throw new IllegalArgumentException();
         }
 
-        wordIndexes = Utility.buildWordIndexes(lines);
+        wordIndexes = buildWordIndexes(lines);
     }
+
+    public String getLine(int lineNumber) {
+        return lines.get(lineNumber);
+    }
+
+    private Trie<IndexTable> buildWordIndexes(Map<Integer, String> lines) {
+        Trie<IndexTable> wordIndexes = new Trie<>();
+        for (Map.Entry<Integer, String> line : lines.entrySet()) {
+            Map<Integer, String> tokens = Utility.tokenizeString(line.getValue());
+            for (Map.Entry<Integer, String> word: tokens.entrySet()) {
+                wordIndexes.insert(word.getValue());
+//                System.out.print(word.getValue() + " ");
+                IndexTable wordIndex = wordIndexes.getElement(word.getValue());
+                if (wordIndex == null) {
+                    wordIndex = new IndexTable(word.getValue());
+                    wordIndexes.setElement(word.getValue(), wordIndex);
+                }
+                wordIndex.addPosition(line.getKey(), word.getKey());
+            }
+//            System.out.println();
+        }
+        return wordIndexes;
+    }
+
+
 
     public int wordCount(String word) throws IllegalArgumentException {
 
@@ -43,7 +68,7 @@ public class Searcher {
             throw new IllegalArgumentException();
         }
 
-        IndexTable wordIndex = wordIndexes.getElement(word.trim().toLowerCase());
+        IndexTable wordIndex = wordIndexes.getElement(word.toLowerCase().trim());
         if (wordIndex != null) {
             return wordIndex.size();
         } else {
@@ -58,18 +83,28 @@ public class Searcher {
 
         List<Pair<Integer, Integer>> result = new ArrayList<>();
 
-        String pattern = Utility.sanitizeString(phrase) + " ";
+        String pattern = Utility.sanitizeString(phrase);
+        pattern = Utility.removeContinuousSpaces(pattern) + " ";
         String firstWord = pattern.split(" ")[0];
 
         IndexTable wordIndex = wordIndexes.getElement(firstWord);
+
         if (wordIndex != null) {
-            for (IndexTable.Position position : wordIndex.getPositions()) {
-
-                String text = lines.get(position.getLine()).substring(position.getColumn() - 1);
-
-                int match = Utility.findKMP(text.toCharArray(), pattern.toCharArray());
-                if (match >= 0) {
-                    result.add(result.size(), new Pair<>(position.getLine(), match + position.getColumn()));
+            for (Pair<Integer, Integer> position : wordIndex.getPositions()) {
+                String text = lines.get(position.getLeftValue());
+                text = Utility.sanitizeString(text);
+                text = text.substring(position.getRightValue() - 1);
+                if (text.length() >= pattern.length()) {
+                    boolean match = true;
+                    for (int i = 0; i < pattern.length(); i++) {
+                        if (text.charAt(i) != pattern.charAt(i)) {
+                            match = false;
+                            break;
+                        }
+                    }
+                    if (match) {
+                        result.add(position);
+                    }
                 }
             }
         } else {
@@ -82,7 +117,13 @@ public class Searcher {
     }
 
     public List<Pair<Integer,Integer>> prefixOccurrence(String prefix) throws IllegalArgumentException {
-        return null;
+        List<Pair<Integer,Integer>> result = new ArrayList<>();
+        for (IndexTable indexTable: wordIndexes.getDescendantElements(prefix.toLowerCase().trim())) {
+            for (Pair<Integer, Integer> position: indexTable.getPositions()) {
+                result.add(position);
+            }
+        }
+        return result;
     }
 
 }

@@ -38,6 +38,10 @@ public class ArrayList<E> implements List<E> {
         return temp;
     }
 
+    public void add(E e) throws IndexOutOfBoundsException, IllegalStateException {
+        add(size, e);
+    }
+
     public void add(int i, E e) throws IndexOutOfBoundsException, IllegalStateException {
         checkIndex(i, size + 1);
         if (size == data.length) {

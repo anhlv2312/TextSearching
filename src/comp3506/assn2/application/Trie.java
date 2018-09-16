@@ -42,25 +42,35 @@ public class Trie<T> {
                 current = current.getChildren().get(ch);
             }
         }
+        return current;
+    }
 
-        if (current != null && current.isWord()) {
-            return current;
+    public List<T> getDescendantElements(String prefix) {
+        List<T> elements = new ArrayList<>();
+        TrieNode<T> current = findNode(prefix);
+        getChildElements(current, elements);
+        return elements;
+    }
+
+    private void getChildElements(TrieNode<T> current, List<T> elements){
+        if (current.isWord()) {
+            elements.add(current.getElement());
         }
-
-        return null;
-
+        for (TrieNode<T> child : current.getChildren().values()) {
+            getChildElements(child, elements);
+        }
     }
 
     public void setElement(String word, T element) {
         TrieNode<T> current = findNode(word);
-        if (current != null) {
+        if (current != null && current.isWord()) {
             current.setElement(element);
         }
     }
 
     public T getElement(String word) {
         TrieNode<T> current = findNode(word);
-        if (current != null) {
+        if (current != null && current.isWord()) {
             return current.getElement();
         } else {
             return null;

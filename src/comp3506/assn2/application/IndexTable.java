@@ -1,9 +1,11 @@
 package comp3506.assn2.application;
 
+import comp3506.assn2.utils.Pair;
+
 public class IndexTable {
 
     private String word;
-    private List<Position> positions;
+    private List<Pair<Integer, Integer>> positions;
 
     public IndexTable(String word) {
         this.word = word;
@@ -11,40 +13,19 @@ public class IndexTable {
     }
 
     public void addPosition(int line, int column) {
-        positions.add(positions.size(), new Position(line, column));
+        positions.add(new Pair<>(line, column));
     }
 
-    public List<Position> getPositions() {
+    public List<Pair<Integer, Integer>> getPositions() {
         return positions;
     }
 
-    public List<Integer> getLineNumbers() {
-        List<Integer> lines = new ArrayList<>();
-        for (Position position: positions) {
-            lines.add(lines.size(), position.getLine());
-        }
-        return lines;
+    public String getWord() {
+        return word;
     }
 
     public int size() {
         return positions.size();
     }
 
-    public class Position {
-        private int line;
-        private int column;
-
-        public Position(int line, int column) {
-            this.line = line;
-            this.column = column;
-        }
-
-        public int getLine() {
-            return line;
-        }
-
-        public int getColumn() {
-            return column;
-        }
-    }
 }
