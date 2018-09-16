@@ -1,7 +1,7 @@
 package comp3506.assn2.application;
 
 import comp3506.assn2.utils.Pair;
-
+import java.util.List;
 import java.io.FileNotFoundException;
 
 
@@ -43,8 +43,8 @@ public class AutoTester implements Search {
         return searcher.wordCount(word);
     }
 
-    public java.util.List<Pair<Integer, Integer>> phraseOccurrence(String phrase) throws IllegalArgumentException {
-        java.util.List<Pair<Integer, Integer>> result = new java.util.ArrayList<>();
+    public List<Pair<Integer, Integer>> phraseOccurrence(String phrase) throws IllegalArgumentException {
+        List<Pair<Integer, Integer>> result = new java.util.ArrayList<>();
         for (Pair<Integer, Integer> pair: searcher.phraseOccurrence(phrase)) {
             result.add(pair);
         }

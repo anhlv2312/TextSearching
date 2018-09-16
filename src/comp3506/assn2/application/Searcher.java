@@ -58,7 +58,7 @@ public class Searcher {
 
         List<Pair<Integer, Integer>> result = new ArrayList<>();
 
-        String pattern = Utility.sanitizeString(phrase);
+        String pattern = Utility.sanitizeString(phrase) + " ";
         String firstWord = pattern.split(" ")[0];
 
         IndexTable wordIndex = wordIndexes.getElement(firstWord);
@@ -79,6 +79,10 @@ public class Searcher {
 
         return result;
 
+    }
+
+    public List<Pair<Integer,Integer>> prefixOccurrence(String prefix) throws IllegalArgumentException {
+        return null;
     }
 
 }
