@@ -5,8 +5,9 @@ import comp3506.assn2.utils.Pair;
 public class ManualTester {
 
 	public static void main(String[] args) throws Exception {
-		AutoTester at = new AutoTester("./files/test.txt",
-				"./files/shakespeare-index.txt",
+//		AutoTester at = new AutoTester("./files/shakespeare.txt",
+		AutoTester at = new AutoTester("./files/shakespeare-test.txt",
+ 				"./files/shakespeare-index.txt",
 				"./files/stop-words.txt");
 
 		String[] words = {"That's", "world ", "test", "to", "queen ", "substantial", "beauty's"};
@@ -16,8 +17,7 @@ public class ManualTester {
         }
 
 
-
-        String phrase = "foe, to thy sweet";
+        String phrase = "own bud buri";
 
         java.util.List<Pair<Integer, Integer>> occurrences = at.phraseOccurrence(phrase);
 

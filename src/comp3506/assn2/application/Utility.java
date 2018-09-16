@@ -57,7 +57,6 @@ public class Utility {
         return stopWords;
     }
 
-
     public static Trie<IndexTable> buildWordIndexes(Map<Integer, String> lines) {
         Trie<IndexTable> wordIndexes = new Trie<>();
         for (Map.Entry<Integer, String> line : lines.entrySet()) {
@@ -76,13 +75,19 @@ public class Utility {
     }
 
     public static Map<Integer, String> tokenizeString(String string) {
-        Map<Integer, String> words = new ProbeHashMap<>();
-        Pattern pattern = Pattern.compile("[0-9a-z]+'?[0-9a-z]+|[0-9a-z]+");
-        Matcher matcher = pattern.matcher(string.toLowerCase());
-        while (matcher.find()) {
-            words.put(matcher.start(), matcher.group());
+        StringBuilder sb = new StringBuilder();
+        Map<Integer, String> tokens = new ProbeHashMap<>();
+        for (int i = 0; i < string.length(); i++) {
+            if (string.charAt(i) != ' ' ) {
+                sb.append(string.charAt(i));
+            } else {
+                if (sb.length() > 0) {
+                    tokens.put(i - sb.length() + 1, sb.toString());
+                    sb = new StringBuilder();
+                }
+            }
         }
-        return words;
+        return tokens;
     }
 
     public static String sanitizeString(String string) {
