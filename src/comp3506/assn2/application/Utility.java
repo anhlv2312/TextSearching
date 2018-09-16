@@ -17,7 +17,10 @@ public class Utility {
         try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {
             String line;
             while ((line = br.readLine()) != null) {
-                lines.put(lineNumber,line);
+                line = sanitizeString(line);
+                if (line.length() > 0) {
+                    lines.put(lineNumber, line);
+                }
                 lineNumber++;
             }
         } catch (IOException ex) {
@@ -74,7 +77,7 @@ public class Utility {
 
     public static Map<Integer, String> tokenizeString(String string) {
         Map<Integer, String> words = new ProbeHashMap<>();
-        Pattern pattern = Pattern.compile("[a-z]+'?[a-z]+");
+        Pattern pattern = Pattern.compile("[0-9a-z]+'?[0-9a-z]+|[0-9a-z]+");
         Matcher matcher = pattern.matcher(string.toLowerCase());
         while (matcher.find()) {
             words.put(matcher.start(), matcher.group());
@@ -83,7 +86,7 @@ public class Utility {
     }
 
     public static String sanitizeString(String string) {
-        return string.toLowerCase().replaceAll("[^a-z ']|' | '","").trim();
+        return string.toLowerCase().replaceAll("[^0-9a-z ']"," ").replaceAll("' | '","  ");
     }
 
     public static int findKMP(char[] text, char[] pattern) {

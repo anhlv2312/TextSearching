@@ -103,13 +103,19 @@ public class AutoTester implements Search {
         String firstWord = pattern.split(" ")[0];
 
         IndexTable wordIndex = wordIndexes.getElement(firstWord);
-        for (int lineNumber: wordIndex.getLineNumbers()) {
-            String text = Utility.sanitizeString(lines.get(lineNumber));
+        if (wordIndex != null) {
+            for (IndexTable.Position position : wordIndex.getPositions()) {
 
-            int match = Utility.findKMP(text.toCharArray(), pattern.toCharArray());
-            if (match >= 0) {
-                result.add(new Pair<>(lineNumber, match));
+                String text = lines.get(position.getLine()).substring(position.getColumn());
+
+                int match = Utility.findKMP(text.toCharArray(), pattern.toCharArray());
+                if (match >= 0) {
+                    result.add(new Pair<>(position.getLine(), match + position.getColumn() + 1));
+                }
             }
+        } else {
+            System.out.println(pattern);
+            System.out.println(firstWord);
         }
 
         return result;

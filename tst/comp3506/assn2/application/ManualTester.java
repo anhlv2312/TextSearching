@@ -5,30 +5,33 @@ import comp3506.assn2.utils.Pair;
 public class ManualTester {
 
 	public static void main(String[] args) throws Exception {
-		AutoTester at = new AutoTester("./files/shakespeare.txt",
+		AutoTester at = new AutoTester("./files/test.txt",
 				"./files/shakespeare-index.txt",
 				"./files/stop-words.txt");
 
-		String[] words = {"That's", "is", "test", "go", "queen ", "queen", "i'll"};
+		String[] words = {"That's", "world ", "test", "to", "queen ", "substantial", "beauty's"};
 
 		for (String word: words) {
             System.out.println(word + ": " + at.wordCount(word));
         }
 
 
-        String phrase = "to be or not to be";
-        java.util.List<Pair<Integer, Integer>> occurences = at.phraseOccurrence(phrase);
 
-		for (Pair<Integer, Integer> occurence: occurences) {
-            System.out.println(occurence.getLeftValue() + " " + occurence.getRightValue());
+        String phrase = "foe, to thy sweet";
+
+        java.util.List<Pair<Integer, Integer>> occurrences = at.phraseOccurrence(phrase);
+
+		for (Pair<Integer, Integer> occurrence: occurrences) {
+            System.out.println(occurrence.getLeftValue() + " " + occurrence.getRightValue());
         }
 
 
 //        Trie<List<Integer>> trie = new Trie<>();
 //        trie.insert("hello");
+//		trie.insert("I");
 //
 //        List<Integer> a = new ArrayList<>();
-//        trie.setElement("hello", a);
+//        trie.setElement("I", a);
 //
 //        a.add(a.size(), 1);
 //
@@ -38,7 +41,10 @@ public class ManualTester {
 //
 //
 //
-//        System.out.println(trie.getElement("hello").size());
+//        System.out.println(trie.getElement("I").size());
+
+
+//		System.out.println(Utility.sanitizeString("    That thereby- ?beauty's rose-adline \"might\" never die,"));
 
 
 	}
