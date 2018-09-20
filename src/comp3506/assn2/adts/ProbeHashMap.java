@@ -1,4 +1,4 @@
-package comp3506.assn2.application;
+package comp3506.assn2.adts;
 
 import comp3506.assn2.adts.AbstractHashMap;
 import comp3506.assn2.adts.ArrayList;

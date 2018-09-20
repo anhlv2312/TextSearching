@@ -1,7 +1,5 @@
 package comp3506.assn2.adts;
 
-import comp3506.assn2.application.ProbeHashMap;
-
 /**
  * Adapted from:
  * https://www.geeksforgeeks.org/longest-prefix-matching-a-trie-based-solution-in-java/
