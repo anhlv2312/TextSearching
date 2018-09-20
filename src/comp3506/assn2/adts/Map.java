@@ -1,4 +1,4 @@
-package comp3506.assn2.application;
+package comp3506.assn2.adts;
 
 /** pp. 404 */
 public interface Map<K, V> {

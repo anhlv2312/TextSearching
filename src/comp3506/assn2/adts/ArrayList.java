@@ -1,4 +1,4 @@
-package comp3506.assn2.application;
+package comp3506.assn2.adts;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

@@ -1,5 +1,9 @@
 package comp3506.assn2.application;
 
+import comp3506.assn2.adts.ArrayList;
+import comp3506.assn2.adts.List;
+import comp3506.assn2.adts.Map;
+import comp3506.assn2.adts.Trie;
 import comp3506.assn2.utils.Pair;
 
 import java.io.FileNotFoundException;

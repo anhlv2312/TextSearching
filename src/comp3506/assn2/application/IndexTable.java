@@ -1,5 +1,7 @@
 package comp3506.assn2.application;
 
+import comp3506.assn2.adts.ArrayList;
+import comp3506.assn2.adts.List;
 import comp3506.assn2.utils.Pair;
 
 public class IndexTable {

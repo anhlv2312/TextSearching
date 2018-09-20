@@ -2,6 +2,7 @@ package comp3506.assn2.application;
 
 import static org.junit.Assert.*;
 
+import comp3506.assn2.adts.Trie;
 import comp3506.assn2.utils.Pair;
 import org.junit.After;
 import org.junit.Before;
@@ -105,7 +106,6 @@ public class ManualTester {
 
         assertEquals((int)prefixOccurrence.getLeftValue(), 13);
         assertEquals((int)prefixOccurrence.getRightValue(), 48);
-
 
         assertEquals(searcher2.prefixOccurrence("s").size(), 13);
     }

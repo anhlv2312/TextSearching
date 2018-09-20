@@ -1,13 +1,13 @@
 package comp3506.assn2.application;
 
-import comp3506.assn2.utils.Pair;
+import comp3506.assn2.adts.ArrayList;
+import comp3506.assn2.adts.List;
+import comp3506.assn2.adts.Map;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Utility {
 

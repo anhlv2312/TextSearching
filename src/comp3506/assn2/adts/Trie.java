@@ -1,4 +1,6 @@
-package comp3506.assn2.application;
+package comp3506.assn2.adts;
+
+import comp3506.assn2.application.ProbeHashMap;
 
 /**
  * Adapted from:
