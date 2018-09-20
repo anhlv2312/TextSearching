@@ -2,7 +2,7 @@ package comp3506.assn2.adts;
 
 import java.util.Random;
 
-/** pp. 423 */
+/* [1 pp. 423] */
 public abstract class AbstractHashMap<K, V> extends AbstractMap<K, V> {
 
     protected int n = 0;
@@ -73,3 +73,10 @@ public abstract class AbstractHashMap<K, V> extends AbstractMap<K, V> {
 
     protected abstract V bucketRemove(int h, K k);
 }
+
+/*
+ * REFERENCE
+ * [1] M. T. Goodrich, R. Tamassia, and M. H. Goldwasser, Data
+ * structures and algorithms in Java. John Wiley & Sons, 2014.
+ *
+ */

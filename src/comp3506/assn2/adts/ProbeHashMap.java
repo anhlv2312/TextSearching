@@ -1,11 +1,6 @@
 package comp3506.assn2.adts;
 
-import comp3506.assn2.adts.AbstractHashMap;
-import comp3506.assn2.adts.ArrayList;
-
-/**
- * pp. 426
- */
+/* [1 pp. 426] */
 public class ProbeHashMap<K, V> extends AbstractHashMap<K, V> {
     private MapEntry<K, V>[] table;
     private MapEntry<K, V> DEFUNCT = new MapEntry<>(null, null);
@@ -89,3 +84,10 @@ public class ProbeHashMap<K, V> extends AbstractHashMap<K, V> {
     }
 
 }
+
+/*
+ * REFERENCE
+ * [1] M. T. Goodrich, R. Tamassia, and M. H. Goldwasser, Data
+ * structures and algorithms in Java. John Wiley & Sons, 2014.
+ *
+ */

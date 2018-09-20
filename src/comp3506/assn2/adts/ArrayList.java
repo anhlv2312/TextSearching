@@ -3,7 +3,7 @@ package comp3506.assn2.adts;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-/** pp. 260 */
+/* [1 pp. 260] */
 public class ArrayList<E> implements List<E> {
 
     public static final int CAPACITY = 16;
@@ -70,7 +70,8 @@ public class ArrayList<E> implements List<E> {
         }
     }
 
-    /** pp. 265 */
+    /* [1 pp. 265] */
+    /** Resize internal array to have given capacity >= size. */
     protected void resize(int capacity) {
         E[] temp = (E[]) new Object[capacity];
         for (int k=0; k < size; k++) {
@@ -83,16 +84,19 @@ public class ArrayList<E> implements List<E> {
         return new ArrayIterator();
     }
 
-    /** pp. 285 */
+    /* [1 pp. 285] */
+    /** A (nonstatic) inner class. Note well that each instance contains an implicit
+     * reference to the containing list, allowing it to access the list's members. */
     private class ArrayIterator implements Iterator<E> {
         private int j = 0;
         private boolean removable = false;
 
+        /** Tests whether the iterator has a next object. */
         public boolean hasNext() {
             return j < size;
         }
 
-
+        /** Returns the next object in the iterator. */
         public E next() throws NoSuchElementException {
             if (j == size) {
                 throw new NoSuchElementException("No next element");
@@ -101,6 +105,7 @@ public class ArrayList<E> implements List<E> {
             return data[j++]; // post-increment j, so it is ready for future call to next
         }
 
+        /** Removes the element returned by most recent call to next. */
         public void remove() throws IllegalStateException {
             if (!removable) {
                 throw new IllegalStateException("nothing to remove");
@@ -111,3 +116,10 @@ public class ArrayList<E> implements List<E> {
     }
 
 }
+
+/*
+ * REFERENCE
+ * [1] M. T. Goodrich, R. Tamassia, and M. H. Goldwasser, Data
+ * structures and algorithms in Java. John Wiley & Sons, 2014.
+ *
+ */
