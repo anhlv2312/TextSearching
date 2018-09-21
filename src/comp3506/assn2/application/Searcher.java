@@ -59,7 +59,6 @@ public class Searcher {
     }
 
 
-
     public int wordCount(String word) throws IllegalArgumentException {
 
         if (word == null || word.length() == 0) {
@@ -74,6 +73,8 @@ public class Searcher {
         }
     }
 
+
+    // TODO: refine this function
     public List<Pair<Integer, Integer>> phraseOccurrence(String phrase) throws IllegalArgumentException {
         if (phrase == null || phrase.length() == 0) {
             throw new IllegalArgumentException();
@@ -124,6 +125,8 @@ public class Searcher {
         return result;
     }
 
+
+    // TODO: refine this function
     public Set<Integer> wordsOnLine(String[] words) throws IllegalArgumentException {
         if (words == null || words.length == 0) {
             throw new IllegalArgumentException();
@@ -174,7 +177,32 @@ public class Searcher {
             }
         }
 
-        
+
+        return result;
+    }
+
+
+    public Set<Integer> wordsNotOnLine(String[] wordsRequired, String[] wordsExcluded) throws IllegalArgumentException {
+        if (wordsExcluded == null || wordsExcluded.length == 0) {
+            throw new IllegalArgumentException();
+        }
+
+        for (String word: wordsExcluded) {
+            if (word == null || word.length() == 0) {
+                throw new IllegalArgumentException();
+            }
+        }
+
+        Set<Integer> result = wordsOnLine(wordsRequired);
+
+        for (String word: wordsExcluded) {
+            IndexTable indexTable = indexTables.getElement(word.toLowerCase().trim());
+            if (indexTable != null) {
+                result.removeAll(indexTable.getLines());
+            }
+        }
+
+
         return result;
     }
 

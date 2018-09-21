@@ -25,7 +25,6 @@ public class ManualTester {
 
     }
 
-
     @Test
     public void testProbeHashSet() {
         Set<Integer> set = new ProbeHashSet<>();
@@ -113,6 +112,7 @@ public class ManualTester {
         assertEquals(searcher1.wordCount("beauty's"), 1);
         assertEquals(searcher1.wordCount("world"), 1);
         assertEquals(searcher1.wordCount("queen"), 0);
+        assertEquals(searcher1.wordCount("and"), 3);
         assertEquals(searcher1.wordCount("SONNETS"), 1);
     }
 
@@ -132,7 +132,6 @@ public class ManualTester {
         assertEquals((int)phraseOccurrence.getLeftValue(), 21);
         assertEquals((int)phraseOccurrence.getRightValue(), 14);
 
-
         phraseOccurrence = searcher1.phraseOccurrence("   own bud    buriest").iterator().next();
         assertEquals((int)phraseOccurrence.getLeftValue(), 21);
         assertEquals((int)phraseOccurrence.getRightValue(), 14);
@@ -143,13 +142,10 @@ public class ManualTester {
     @Test
     public void testPrefixOccurrence() {
         assertEquals(searcher2.prefixOccurrence("obscure").size(), 4);
-
         Pair<Integer, Integer> prefixOccurrence;
         prefixOccurrence = searcher2.prefixOccurrence("villain").iterator().next();
-
         assertEquals((int)prefixOccurrence.getLeftValue(), 13);
         assertEquals((int)prefixOccurrence.getRightValue(), 48);
-
         assertEquals(searcher2.prefixOccurrence("s").size(), 13);
     }
 
@@ -173,7 +169,18 @@ public class ManualTester {
         assertTrue(searcher1.someWordsOnLine(new String[]{"the", "and", "light's"}).contains(1));
         assertTrue(searcher1.someWordsOnLine(new String[]{"the", "and", "light's"}).contains(22));
         assertTrue(searcher1.someWordsOnLine(new String[]{"the", "and", "light's"}).contains(24));
+    }
 
+    @Test
+    public void testWordsNotOnLine() {
+        assertEquals(searcher1.wordsNotOnLine(new String[]{"flame", "with"}, new String[]{"with"}).size(), 0);
+        assertTrue(searcher1.wordsNotOnLine(new String[]{"flame", "with"}, new String[]{"tester"}).contains(16));
+        assertEquals(searcher1.wordsNotOnLine(new String[]{"the", "world's"}, new String[]{"art"}).size(), 1);
+        assertTrue(searcher1.wordsNotOnLine(new String[]{"the", "world's"}, new String[]{"art"}).contains(24));
+        assertEquals(searcher1.wordsNotOnLine(new String[]{"the"}, new String[]{"and"}).size(), 5);
+        assertTrue(searcher1.wordsNotOnLine(new String[]{"the"}, new String[]{"and"}).contains(23));
+        assertTrue(searcher1.wordsNotOnLine(new String[]{"the"}, new String[]{"and"}).contains(1));
+        assertFalse(searcher1.wordsNotOnLine(new String[]{"the"}, new String[]{"and"}).contains(20));
     }
 
 }
