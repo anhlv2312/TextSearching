@@ -2,6 +2,7 @@ package comp3506.assn2.application;
 
 import comp3506.assn2.utils.Pair;
 import java.util.List;
+import java.util.ArrayList;
 import java.io.FileNotFoundException;
 
 
@@ -43,8 +44,16 @@ public class AutoTester implements Search {
         return searcher.wordCount(word);
     }
 
+    public List<Pair<Integer, Integer>> prefixOccurrence(String phrase) throws IllegalArgumentException {
+        List<Pair<Integer, Integer>> result = new ArrayList<>();
+        for (Pair<Integer, Integer> pair: searcher.prefixOccurrence(phrase)) {
+            result.add(pair);
+        }
+        return result;
+    }
+
     public List<Pair<Integer, Integer>> phraseOccurrence(String phrase) throws IllegalArgumentException {
-        List<Pair<Integer, Integer>> result = new java.util.ArrayList<>();
+        List<Pair<Integer, Integer>> result = new ArrayList<>();
         for (Pair<Integer, Integer> pair: searcher.phraseOccurrence(phrase)) {
             result.add(pair);
         }
@@ -52,11 +61,29 @@ public class AutoTester implements Search {
     }
 
     public List<Integer> wordsOnLine(String[] words) throws IllegalArgumentException {
-        List<Integer> result = new java.util.ArrayList<>();
+        List<Integer> result = new ArrayList<>();
         for (int line: searcher.wordsOnLine(words)) {
             result.add(line);
         }
         return result;
     }
+
+
+    public List<Integer> someWordsOnLine(String[] words) throws IllegalArgumentException {
+        List<Integer> result = new ArrayList<>();
+        for (int line: searcher.someWordsOnLine(words)) {
+            result.add(line);
+        }
+        return result;
+    }
+
+    public List<Integer> wordsNotOnLine(String[] wordsRequired, String[] wordsExcluded) throws IllegalArgumentException {
+        List<Integer> result = new ArrayList<>();
+        for (int line: searcher.wordsNotOnLine(wordsRequired, wordsExcluded)) {
+            result.add(line);
+        }
+        return result;
+    }
+
 
 }

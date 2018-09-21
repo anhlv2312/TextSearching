@@ -41,6 +41,8 @@ public class Searcher {
         return lines.get(lineNumber);
     }
 
+
+    // TODO: fix this also
     private Trie<IndexTable> buildWordIndexes(Map<Integer, String> lines) {
         Trie<IndexTable> wordIndexes = new Trie<>();
         for (Map.Entry<Integer, String> line : lines.entrySet()) {
