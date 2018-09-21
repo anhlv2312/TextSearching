@@ -2,7 +2,9 @@ package comp3506.assn2.application;
 
 import static org.junit.Assert.*;
 
+import comp3506.assn2.adts.ProbeHashSet;
 import comp3506.assn2.adts.Trie;
+import comp3506.assn2.adts.Set;
 import comp3506.assn2.utils.Pair;
 import org.junit.After;
 import org.junit.Before;
@@ -22,6 +24,49 @@ public class ManualTester {
     public void after() throws Exception {
 
     }
+
+
+    @Test
+    public void testProbeHashSet() {
+        Set<Integer> set = new ProbeHashSet<>();
+        set.add(1);
+        set.add(1);
+        assertEquals(set.size(), 1);
+        set.add(2);
+        assertEquals(set.size(), 2);
+        assertTrue(set.contains(2));
+        set.remove(1);
+        assertFalse(set.contains(1));
+    }
+
+    @Test
+    public void testProbeHashSetAll() {
+        Set<Integer> set1 = new ProbeHashSet<>();
+        Set<Integer> set2 = new ProbeHashSet<>();
+        set1.add(1);
+        set1.add(2);
+        set1.add(3);
+        set2.add(2);
+        set2.add(3);
+        set2.add(4);
+        assertEquals(set1.size(),3);
+        set1.removeAll(set2);
+        assertEquals(set1.size(),1);
+        assertTrue(set1.contains(1));
+        assertFalse(set1.contains(2));
+        assertFalse(set1.contains(3));
+        assertTrue(set2.contains(3));
+        set1.addAll(set2);
+        assertEquals(set1.size(),4);
+        assertTrue(set1.contains(3));
+        assertTrue(set1.contains(4));
+        set2.remove(4);
+        set1.retainAll(set2);
+        assertEquals(set1.size(),2);
+        assertTrue(set1.contains(2));
+        assertTrue(set1.contains(3));
+    }
+
 
     @Test
     public void testSanitizeString() {

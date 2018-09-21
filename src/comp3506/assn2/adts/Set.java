@@ -6,6 +6,9 @@ import java.util.Iterator;
 /* [1 pp. 445] */
 public interface Set<K> {
 
+    /** Returns the number of entries in S. */
+    int size();
+
     /** Adds the element e to S (if not already present). */
     boolean add(K key);
 
@@ -16,13 +19,13 @@ public interface Set<K> {
     boolean contains(K key);
 
     /** Updates S to also include all elements of set Target. */
-    boolean addAll(Set<K> target);
+    void addAll(Set<K> target);
 
     /** Updates S so that it only keeps those elements that are also elements of set Target. */
-    boolean retainAll(Set<K> target);
+    void retainAll(Set<K> target);
 
     /** Updates S by removing any of its elements that also occur in set Target */
-    boolean removeAll(Set<K> target);
+    void removeAll(Set<K> target);
 
     /** Returns an iterator of the elements of S. */
     Iterator<K> iterator();
