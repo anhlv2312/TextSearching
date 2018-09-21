@@ -50,4 +50,13 @@ public class AutoTester implements Search {
         }
         return result;
     }
+
+    public List<Integer> wordsOnLine(String[] words) throws IllegalArgumentException {
+        List<Integer> result = new java.util.ArrayList<>();
+        for (int line: searcher.wordsOnLine(words)) {
+            result.add(line);
+        }
+        return result;
+    }
+
 }

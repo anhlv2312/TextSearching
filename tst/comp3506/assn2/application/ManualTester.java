@@ -94,16 +94,13 @@ public class ManualTester {
     public void testIndexTable() {
         Trie<IndexTable> wordIndexes = new Trie<>();
         wordIndexes.insert("test");
-        IndexTable indexTable = new IndexTable("test");
+        IndexTable indexTable = new IndexTable();
         indexTable.addPosition(3, 2);
-        indexTable.addPosition(4, 10);
-
-        assertEquals(indexTable.getPositions().size(), 2);
+        assertEquals(indexTable.getPositions().size(), 1);
         assertEquals((int)indexTable.getPositions().get(0).getLeftValue(), 3);
         assertEquals((int)indexTable.getPositions().get(0).getRightValue(), 2);
-        assertEquals((int)indexTable.getPositions().get(1).getLeftValue(), 4);
-        assertEquals((int)indexTable.getPositions().get(1).getRightValue(), 10);
-
+        indexTable.addPosition(4, 10);
+        assertEquals(indexTable.getPositions().size(), 2);
     }
 
     @Test
@@ -121,6 +118,7 @@ public class ManualTester {
 
     @Test
     public void testPhraseOccurrence() {
+        assertEquals(searcher1.phraseOccurrence("something bud buri").size(), 0);
         assertEquals(searcher1.phraseOccurrence("own bud buri").size(), 0);
         assertEquals(searcher1.phraseOccurrence("own bud buriest").size(), 1);
         assertEquals(searcher1.phraseOccurrence("   own bud buriest").size(), 1);
@@ -153,6 +151,29 @@ public class ManualTester {
         assertEquals((int)prefixOccurrence.getRightValue(), 48);
 
         assertEquals(searcher2.prefixOccurrence("s").size(), 13);
+    }
+
+
+    @Test
+    public void testWordOnLine() {
+        assertEquals(searcher1.wordsOnLine(new String[]{"flame", "with"}).size(), 1);
+        assertEquals(searcher1.wordsOnLine(new String[]{"test"}).size(), 0);
+        assertEquals(searcher1.wordsOnLine(new String[]{"test", "the"}).size(), 0);
+        assertEquals(searcher1.wordsOnLine(new String[]{"the"}).size(), 7);
+        assertEquals(searcher1.wordsOnLine(new String[]{"the", "world's"}).size(), 2);
+    }
+
+    @Test
+    public void testSomeWordOnLine() {
+        assertEquals(searcher1.someWordsOnLine(new String[]{"flame", "with"}).size(), 1);
+        assertEquals(searcher1.someWordsOnLine(new String[]{"test"}).size(), 0);
+        assertEquals(searcher1.someWordsOnLine(new String[]{"test", "the"}).size(), 7);
+        assertEquals(searcher1.someWordsOnLine(new String[]{"the"}).size(), 7);
+        assertEquals(searcher1.someWordsOnLine(new String[]{"the", "and", "light's"}).size(), 9);
+        assertTrue(searcher1.someWordsOnLine(new String[]{"the", "and", "light's"}).contains(1));
+        assertTrue(searcher1.someWordsOnLine(new String[]{"the", "and", "light's"}).contains(22));
+        assertTrue(searcher1.someWordsOnLine(new String[]{"the", "and", "light's"}).contains(24));
+
     }
 
 }

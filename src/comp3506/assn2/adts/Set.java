@@ -4,7 +4,7 @@ package comp3506.assn2.adts;
 import java.util.Iterator;
 
 /* [1 pp. 445] */
-public interface Set<K> {
+public interface Set<K> extends Iterable<K> {
 
     /** Returns the number of entries in S. */
     int size();

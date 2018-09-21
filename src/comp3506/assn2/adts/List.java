@@ -28,7 +28,7 @@ public interface List<E> extends Iterable<E> {
     /** Inserts a new element e into the end position of the list */
     void add(E e) throws IndexOutOfBoundsException;
 
-    /** Removes and returns the element at index i, moving all subse- quent elements one index earlier in the list;
+    /** Removes and returns the element at index i, moving all subsequent elements one index earlier in the list;
      * an error condition occurs if i is not in range [0, size( ) − 1]. */
     E remove(int i) throws IndexOutOfBoundsException;
 
