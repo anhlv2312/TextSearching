@@ -1,29 +1,21 @@
-package comp3506.assn2.application;
+package comp3506.assn2.testdriver;
 
-import comp3506.assn2.adts.ProbeHashSet;
-import comp3506.assn2.adts.Set;
-import comp3506.assn2.adts.Trie;
+import comp3506.assn2.application.AutoTester;
 import comp3506.assn2.utils.Pair;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ManualTester {
+public class ManualTests {
 
-    private AutoTester autoTester;
+    private static AutoTester autoTester;
 
-    @Before
-    public void before() throws Exception {
+    @BeforeClass
+    public static void before() throws Exception {
         autoTester = new AutoTester("./files/shakespeare.txt",
                 "./files/shakespeare-index.txt",
                 "./files/stop-words.txt");
-    }
-
-    @After
-    public void after() throws Exception {
-
     }
 
     @Test

@@ -1,16 +1,20 @@
-package comp3506.assn2.application;
+package comp3506.assn2.testdriver;
 
 import static org.junit.Assert.*;
 
 import comp3506.assn2.adts.ProbeHashSet;
 import comp3506.assn2.adts.Trie;
 import comp3506.assn2.adts.Set;
+import comp3506.assn2.application.IndexTable;
+import comp3506.assn2.application.Searcher;
+import comp3506.assn2.application.Utility;
 import comp3506.assn2.utils.Pair;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class UnitTester {
+public class UnitTests {
 
     private Searcher searcher1, searcher2;
 
@@ -70,7 +74,7 @@ public class UnitTester {
     @Test
     public void testSanitizeString() {
         String string1 = "    That thereby- ?beauty's rose-adline \"might\" never die,";
-        assertEquals(Utility.sanitizeString(string1), "    that thereby   beauty's rose adline  might  never die ");
+        Assert.assertEquals(Utility.sanitizeString(string1), "    that thereby   beauty's rose adline  might  never die ");
 
         String string2 = "THE SONNETS";
         assertEquals(Utility.sanitizeString(string2), "the sonnets");
