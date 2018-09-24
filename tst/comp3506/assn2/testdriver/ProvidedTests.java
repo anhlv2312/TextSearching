@@ -45,7 +45,7 @@ public class ProvidedTests {
 	@BeforeClass
 	public static void openFiles() {
 		try {
-			Search searchApplication = new AutoTester("files\\shakespeare.txt", "files\\shakespeare-index.txt", "files\\stop-words.txt");
+			searchApplication = new AutoTester("files/shakespeare.txt", "files/shakespeare-index.txt", "files/stop-words.txt");
 			
 			searchApplication.wordCount("obscure");
 		} catch (FileNotFoundException | IllegalArgumentException e) {
@@ -91,6 +91,17 @@ public class ProvidedTests {
 					                  new TestingPair<>(78736,5), new TestingPair<>(148585,19),                               // obscures
 					                  new TestingPair<>(58643,38), new TestingPair<>(146994,25)));                            // obscurely
 		List<TestingPair<Integer,Integer>> searchResult = makeTestingPair(searchApplication.prefixOccurrence("obscure"));
+
+		System.out.println("Expected: ");
+		for (Pair<Integer, Integer> result: expected) {
+			System.out.println(result.getLeftValue() + " " + result.getRightValue());
+		}
+
+		System.out.println("Search Result: ");
+		for (Pair<Integer, Integer> result: searchResult) {
+			System.out.println(result.getLeftValue() + " " + result.getRightValue());
+		}
+
 		assertThat("Locations of 'obscure' prefix were not expected.", searchResult, containsInAnyOrder(expected.toArray()));
 		assertThat("Search for 'obscure' returned wrong number of results.", searchResult, hasSize(expected.size()));
 	}

@@ -20,7 +20,9 @@ public class ManualTests {
 
     @Test
     public void testWordCount() {
-        assertEquals(autoTester.wordCount("sonnet"), 16);
+        assertEquals(autoTester.wordCount("sonnet"), 10);
+        assertEquals(autoTester.wordCount("glorious"), 49);
+        assertEquals(autoTester.wordCount("sweets"), 18);
     }
 
     @Test

@@ -18,7 +18,6 @@ public class Utility {
         try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {
             String line;
             while ((line = br.readLine()) != null) {
-                line = line;
                 if (line.length() > 0) {
                     lines.put(lineNumber, line);
                 }
@@ -72,7 +71,7 @@ public class Utility {
                 }
             }
             if ((i == string.length() - 1) && (sb.length() > 0)) {
-                tokens.put(i - sb.length() + 1, sb.toString());
+                tokens.put((i + 1) - sb.length() + 1, sb.toString());
             }
         }
         return tokens;

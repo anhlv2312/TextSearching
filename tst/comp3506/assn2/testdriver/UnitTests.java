@@ -2,6 +2,7 @@ package comp3506.assn2.testdriver;
 
 import static org.junit.Assert.*;
 
+import comp3506.assn2.adts.Map;
 import comp3506.assn2.adts.ProbeHashSet;
 import comp3506.assn2.adts.Trie;
 import comp3506.assn2.adts.Set;
@@ -83,12 +84,21 @@ public class UnitTests {
     @Test
     public void testTokenizeString() {
         assertEquals(Utility.tokenizeString("From fairest I creatures A we desire increase,").size(), 8);
-//        for (String token : Utility.tokenizeString("From fairest I creatures A we desire increase,").values()) {
-//            System.out.println(token);
-//        }
-//        for (String token : Utility.tokenizeString("THE SONNETS").values()) {
-//            System.out.println(token);
-//        }
+
+        Map<Integer, String> tokens = Utility.tokenizeString("That Rome holds of his name; wherein obscurely");
+        assertEquals(tokens.size(), 8);
+        assertEquals(tokens.get(1), "that");
+        assertEquals(tokens.get(30), "wherein");
+        assertEquals(tokens.get(38), "obscurely");
+
+        tokens = Utility.tokenizeString("    Of Arthur, whom they say is kill'd to-night");
+        assertEquals(tokens.size(), 9);
+        assertEquals(tokens.get(1), null);
+        assertEquals(tokens.get(5), "of");
+        assertEquals(tokens.get(33), "kill'd");
+        assertEquals(tokens.get(40), "to");
+        assertEquals(tokens.get(43), "night");
+
         assertEquals(Utility.tokenizeString("THE SONNETS ").size(), 2);
         assertEquals(Utility.tokenizeString("THE SONNETS").size(), 2);
     }

@@ -48,6 +48,10 @@ public class Searcher {
         for (Map.Entry<Integer, String> line : lines.entrySet()) {
             Map<Integer, String> tokens = Utility.tokenizeString(line.getValue());
             for (Map.Entry<Integer, String> word: tokens.entrySet()) {
+
+                if (word.getValue() == "obscurely") {
+                    System.out.println(line);
+                }
                 wordIndexes.insert(word.getValue());
                 IndexTable wordIndex = wordIndexes.getElement(word.getValue());
                 if (wordIndex == null) {
