@@ -6,7 +6,7 @@ import comp3506.assn2.adts.Map;
 import comp3506.assn2.adts.ProbeHashSet;
 import comp3506.assn2.adts.Trie;
 import comp3506.assn2.adts.Set;
-import comp3506.assn2.application.IndexTable;
+import comp3506.assn2.application.WordIndex;
 import comp3506.assn2.application.SearchApplication;
 import comp3506.assn2.utils.Pair;
 import org.junit.After;
@@ -103,16 +103,16 @@ public class UnitTests {
     }
 
     @Test
-    public void testIndexTable() {
-        Trie<IndexTable> wordIndexes = new Trie<>();
+    public void testWordIndexes() {
+        Trie<WordIndex> wordIndexes = new Trie<>();
         wordIndexes.insert("test");
-        IndexTable indexTable = new IndexTable();
-        indexTable.addPosition(3, 2);
-        assertEquals(indexTable.getPositions().size(), 1);
-        assertEquals((int)indexTable.getPositions().get(0).getLeftValue(), 3);
-        assertEquals((int)indexTable.getPositions().get(0).getRightValue(), 2);
-        indexTable.addPosition(4, 10);
-        assertEquals(indexTable.getPositions().size(), 2);
+        WordIndex wordIndex = new WordIndex();
+        wordIndex.addPosition(3, 2);
+        assertEquals(wordIndex.getPositions().size(), 1);
+        assertEquals((int) wordIndex.getPositions().get(0).getLeftValue(), 3);
+        assertEquals((int) wordIndex.getPositions().get(0).getRightValue(), 2);
+        wordIndex.addPosition(4, 10);
+        assertEquals(wordIndex.getPositions().size(), 2);
     }
 
     @Test
