@@ -105,7 +105,7 @@ public class SearchApplication {
                 } else {
                     lastLine = indexes.get(i + 1).getRightValue() - 1;
                 }
-                Section section = new Section(title);
+                Section section = new Section();
                 while ((lastLine < 0 || lineNumber < lastLine-1)) {
                     line = br.readLine();
                     if (line != null) {

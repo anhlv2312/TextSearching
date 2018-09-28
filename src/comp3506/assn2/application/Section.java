@@ -6,10 +6,10 @@ import comp3506.assn2.utils.Pair;
 public class Section {
 
     private Map<Integer, String> lines;
-    private Trie<IndexTable> indexTables;
+    private Trie<PositionMap> positionTrie;
 
-    public Section(String title) {
-        indexTables = new Trie<>();
+    public Section() {
+        positionTrie = new Trie<>();
         lines = new ProbeHashMap<>();
     }
 
@@ -24,13 +24,13 @@ public class Section {
             int position = token.getKey();
             String word = token.getValue();
 
-            indexTables.insert(token.getValue());
-            IndexTable indexTable = indexTables.getElement(word);
-            if (indexTable == null) {
-                indexTable = new IndexTable();
-                indexTables.setElement(word, indexTable);
+            positionTrie.insert(token.getValue());
+            PositionMap positionMap = positionTrie.getElement(word);
+            if (positionMap == null) {
+                positionMap = new PositionMap();
+                positionTrie.setElement(word, positionMap);
             }
-            indexTable.addPosition(lineNumber, position);
+            positionMap.addPosition(lineNumber, position);
         }
     }
 
@@ -42,9 +42,9 @@ public class Section {
 
         int result = 0;
 
-        IndexTable indexTable = indexTables.getElement(word.toLowerCase().trim());
-        if (indexTable != null) {
-            result += indexTable.size();
+        PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
+        if (positionMap != null) {
+            result += positionMap.size();
         }
 
         return result;
@@ -60,10 +60,10 @@ public class Section {
         String pattern = Utility.sanitizeString(phrase);
         pattern = Utility.removeContinuousSpaces(pattern) + " ";
         String firstWord = pattern.split(" ")[0];
-        IndexTable indexTable = indexTables.getElement(firstWord);
+        PositionMap positionMap = positionTrie.getElement(firstWord);
 
-        if (indexTable != null) {
-            for (Pair<Integer, Integer> position : indexTable.getPositions()) {
+        if (positionMap != null) {
+            for (Pair<Integer, Integer> position : positionMap.getPositions()) {
                 String text = lines.get(position.getLeftValue());
                 text = Utility.sanitizeString(text);
                 text = text.substring(position.getRightValue() - 1);
@@ -89,8 +89,8 @@ public class Section {
             throw new IllegalArgumentException();
         }
         Set<Pair<Integer,Integer>> result = new ProbeHashSet<>();
-        for (IndexTable indexTable : indexTables.getDescendantElements(prefix.toLowerCase().trim())) {
-            for (Pair<Integer, Integer> position: indexTable.getPositions()) {
+        for (PositionMap positionMap : positionTrie.getDescendantElements(prefix.toLowerCase().trim())) {
+            for (Pair<Integer, Integer> position: positionMap.getPositions()) {
                 result.add(position);
             }
         }
@@ -112,11 +112,11 @@ public class Section {
         Set<Integer> result = null;
         for (String word: words) {
             Set<Integer> lineNumbers;
-            IndexTable indexTable = indexTables.getElement(word.toLowerCase().trim());
-            if (indexTable == null) {
+            PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
+            if (positionMap == null) {
                 return new ProbeHashSet<>();
             } else {
-                lineNumbers = indexTable.getLines();
+                lineNumbers = positionMap.getLines();
                 if (result == null) {
                     result = lineNumbers;
                 } else {
@@ -143,9 +143,9 @@ public class Section {
         Set<Integer> result = new ProbeHashSet<>();
 
         for (String word : words) {
-            IndexTable indexTable = indexTables.getElement(word.toLowerCase().trim());
-            if (indexTable != null) {
-                result.addAll(indexTable.getLines());
+            PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
+            if (positionMap != null) {
+                result.addAll(positionMap.getLines());
             }
         }
 
@@ -168,9 +168,9 @@ public class Section {
         Set<Integer> result = wordsOnLine(wordsRequired);
 
         for (String word : wordsExcluded) {
-            IndexTable indexTable = indexTables.getElement(word.toLowerCase().trim());
-            if (indexTable != null) {
-                result.removeAll(indexTable.getLines());
+            PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
+            if (positionMap != null) {
+                result.removeAll(positionMap.getLines());
             }
         }
 
