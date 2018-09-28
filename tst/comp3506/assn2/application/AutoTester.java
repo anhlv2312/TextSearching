@@ -16,7 +16,7 @@ import java.io.FileNotFoundException;
  */
 public class AutoTester implements Search {
 
-    Searcher searcher;
+    private SearchApplication searchApplication;
 
     /**
      * Create an object that performs search operations on a document.
@@ -37,16 +37,16 @@ public class AutoTester implements Search {
             throws FileNotFoundException, IllegalArgumentException {
         // TODO Implement constructor to load the data from these files and
         // TODO setup your data structures for the application.
-        searcher = new Searcher(documentFileName, indexFileName, stopWordsFileName);
+        searchApplication = new SearchApplication(documentFileName, indexFileName, stopWordsFileName);
     }
 
     public int wordCount(String word) throws IllegalArgumentException {
-        return searcher.wordCount(word);
+        return searchApplication.wordCount(word);
     }
 
     public List<Pair<Integer, Integer>> prefixOccurrence(String phrase) throws IllegalArgumentException {
         List<Pair<Integer, Integer>> result = new ArrayList<>();
-        for (Pair<Integer, Integer> pair: searcher.prefixOccurrence(phrase)) {
+        for (Pair<Integer, Integer> pair: searchApplication.prefixOccurrence(phrase)) {
             result.add(pair);
         }
         return result;
@@ -54,7 +54,7 @@ public class AutoTester implements Search {
 
     public List<Pair<Integer, Integer>> phraseOccurrence(String phrase) throws IllegalArgumentException {
         List<Pair<Integer, Integer>> result = new ArrayList<>();
-        for (Pair<Integer, Integer> pair: searcher.phraseOccurrence(phrase)) {
+        for (Pair<Integer, Integer> pair: searchApplication.phraseOccurrence(phrase)) {
             result.add(pair);
         }
         return result;
@@ -62,7 +62,7 @@ public class AutoTester implements Search {
 
     public List<Integer> wordsOnLine(String[] words) throws IllegalArgumentException {
         List<Integer> result = new ArrayList<>();
-        for (int line: searcher.wordsOnLine(words)) {
+        for (int line: searchApplication.wordsOnLine(words)) {
             result.add(line);
         }
         return result;
@@ -71,7 +71,7 @@ public class AutoTester implements Search {
 
     public List<Integer> someWordsOnLine(String[] words) throws IllegalArgumentException {
         List<Integer> result = new ArrayList<>();
-        for (int line: searcher.someWordsOnLine(words)) {
+        for (int line: searchApplication.someWordsOnLine(words)) {
             result.add(line);
         }
         return result;
@@ -79,7 +79,7 @@ public class AutoTester implements Search {
 
     public List<Integer> wordsNotOnLine(String[] wordsRequired, String[] wordsExcluded) throws IllegalArgumentException {
         List<Integer> result = new ArrayList<>();
-        for (int line: searcher.wordsNotOnLine(wordsRequired, wordsExcluded)) {
+        for (int line: searchApplication.wordsNotOnLine(wordsRequired, wordsExcluded)) {
             result.add(line);
         }
         return result;
