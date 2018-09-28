@@ -2,6 +2,7 @@ package comp3506.assn2.application;
 
 import comp3506.assn2.adts.*;
 import comp3506.assn2.utils.Pair;
+import comp3506.assn2.utils.Triple;
 
 public class Section {
 
@@ -27,7 +28,7 @@ public class Section {
             positionTrie.insert(token.getValue());
             PositionMap positionMap = positionTrie.getElement(word);
             if (positionMap == null) {
-                positionMap = new PositionMap();
+                positionMap = new PositionMap(word);
                 positionTrie.setElement(word, positionMap);
             }
             positionMap.addPosition(lineNumber, position);
@@ -63,7 +64,7 @@ public class Section {
         PositionMap positionMap = positionTrie.getElement(firstWord);
 
         if (positionMap != null) {
-            for (Pair<Integer, Integer> position : positionMap.getPositions()) {
+            for (Pair<Integer, Integer> position : positionMap.getPositionPairs()) {
                 String text = lines.get(position.getLeftValue());
                 text = Utility.sanitizeString(text);
                 text = text.substring(position.getRightValue() - 1);
@@ -90,7 +91,7 @@ public class Section {
         }
         Set<Pair<Integer,Integer>> result = new ProbeHashSet<>();
         for (PositionMap positionMap : positionTrie.getDescendantElements(prefix.toLowerCase().trim())) {
-            for (Pair<Integer, Integer> position: positionMap.getPositions()) {
+            for (Pair<Integer, Integer> position: positionMap.getPositionPairs()) {
                 result.add(position);
             }
         }
@@ -116,7 +117,7 @@ public class Section {
             if (positionMap == null) {
                 return new ProbeHashSet<>();
             } else {
-                lineNumbers = positionMap.getLines();
+                lineNumbers = positionMap.getLineNumbers();
                 if (result == null) {
                     result = lineNumbers;
                 } else {
@@ -145,14 +146,12 @@ public class Section {
         for (String word : words) {
             PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
             if (positionMap != null) {
-                result.addAll(positionMap.getLines());
+                result.addAll(positionMap.getLineNumbers());
             }
         }
 
         return result;
     }
-
-
 
     public Set<Integer> wordsNotOnLine(String[] wordsRequired, String[] wordsExcluded) throws IllegalArgumentException {
         if (wordsExcluded == null || wordsExcluded.length == 0) {
@@ -170,11 +169,60 @@ public class Section {
         for (String word : wordsExcluded) {
             PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
             if (positionMap != null) {
-                result.removeAll(positionMap.getLines());
+                result.removeAll(positionMap.getLineNumbers());
             }
         }
 
         return result;
     }
+
+    public Set<Triple<Integer,Integer,String>> simpleAndSearch(String[] words)
+            throws IllegalArgumentException {
+
+        if (words == null || words.length == 0) {
+            throw new IllegalArgumentException();
+        }
+
+        for (String word: words) {
+            if (word == null || word.length() == 0) {
+                throw new IllegalArgumentException();
+            }
+        }
+
+        Set<Triple<Integer,Integer,String>> result = new ProbeHashSet<>();
+        for (String word: words) {
+            PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
+            if (positionMap != null) {
+                result.addAll(positionMap.getPositionTriples());
+            } else {
+                return new ProbeHashSet<>();
+            }
+        }
+        return result;
+    }
+
+    public Set<Triple<Integer,Integer,String>> simpleOrSearch(String[] words)
+            throws IllegalArgumentException {
+
+        if (words == null || words.length == 0) {
+            throw new IllegalArgumentException();
+        }
+
+        for (String word: words) {
+            if (word == null || word.length() == 0) {
+                throw new IllegalArgumentException();
+            }
+        }
+
+        Set<Triple<Integer,Integer,String>> result = new ProbeHashSet<>();
+        for (String word: words) {
+            PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
+            if (positionMap != null) {
+                result.addAll(positionMap.getPositionTriples());
+            }
+        }
+        return result;
+    }
+
 
 }

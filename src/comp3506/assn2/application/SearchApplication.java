@@ -2,6 +2,7 @@ package comp3506.assn2.application;
 
 import comp3506.assn2.adts.*;
 import comp3506.assn2.utils.Pair;
+import comp3506.assn2.utils.Triple;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -82,16 +83,44 @@ public class SearchApplication {
     }
 
 
-//    public Set<Triple<Integer,Integer,String>> simpleAndSearch(String[] titles, String[] words)
-//            throws IllegalArgumentException {
-//
-//        Set<Triple<Integer, Integer, String>> result = new ProbeHashSet<>();
-//        for (Section work: sections.values()) {
-//            result.addAll(work.wordsOnLine(words));
-//        }
-//        return result;
-//
-//    }
+    public Set<Triple<Integer,Integer,String>> simpleAndSearch(String[] titles, String[] words)
+            throws IllegalArgumentException {
+
+        if (titles == null || titles.length == 0) {
+            titles = new String[indexes.size()];
+            for (int i = 0; i < titles.length; i++) {
+                titles[i] = indexes.get(i).getLeftValue();
+            }
+        }
+
+        Set<Triple<Integer, Integer, String>> result = new ProbeHashSet<>();
+        for (String title: titles) {
+            Section section = sections.get(title);
+            result.addAll(section.simpleAndSearch(words));
+        }
+        return result;
+
+    }
+
+
+    public Set<Triple<Integer,Integer,String>> simpleOrSearch(String[] titles, String[] words)
+            throws IllegalArgumentException {
+
+        if (titles == null || titles.length == 0) {
+            titles = new String[indexes.size()];
+            for (int i = 0; i < titles.length; i++) {
+                titles[i] = indexes.get(i).getLeftValue();
+            }
+        }
+
+        Set<Triple<Integer, Integer, String>> result = new ProbeHashSet<>();
+        for (String title: titles) {
+            Section section = sections.get(title);
+            result.addAll(section.simpleOrSearch(words));
+        }
+        return result;
+
+    }
 
     private void buildWordIndexes(String documentFileName) throws FileNotFoundException {
         int lineNumber = 0;

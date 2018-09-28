@@ -105,13 +105,13 @@ public class UnitTests {
     public void testWordIndexes() {
         Trie<PositionMap> wordIndexes = new Trie<>();
         wordIndexes.insert("test");
-        PositionMap positionMap = new PositionMap();
+        PositionMap positionMap = new PositionMap("Test");
         positionMap.addPosition(3, 2);
-        assertEquals(positionMap.getPositions().size(), 1);
-        assertEquals((int) positionMap.getPositions().get(0).getLeftValue(), 3);
-        assertEquals((int) positionMap.getPositions().get(0).getRightValue(), 2);
+        assertEquals(positionMap.getPositionPairs().size(), 1);
+        assertEquals((int) positionMap.getPositionPairs().iterator().next().getLeftValue(), 3);
+        assertEquals((int) positionMap.getPositionPairs().iterator().next().getRightValue(), 2);
         positionMap.addPosition(4, 10);
-        assertEquals(positionMap.getPositions().size(), 2);
+        assertEquals(positionMap.getPositionPairs().size(), 2);
     }
 
     @Test

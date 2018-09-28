@@ -2,14 +2,17 @@ package comp3506.assn2.application;
 
 import comp3506.assn2.adts.*;
 import comp3506.assn2.utils.Pair;
+import comp3506.assn2.utils.Triple;
 
 /* [1 pp. 449] */
 public class PositionMap {
 
     private int total = 0;
+    private String word;
     private ProbeHashMap<Integer, List<Integer>> positions;
 
-    public PositionMap() {
+    public PositionMap(String word) {
+        this.word = word;
         positions = new ProbeHashMap<>();
     }
 
@@ -27,8 +30,8 @@ public class PositionMap {
         total++;
     }
 
-    public List<Pair<Integer, Integer>> getPositions() {
-        ArrayList<Pair<Integer, Integer>> result = new ArrayList<>();
+    public Set<Pair<Integer, Integer>> getPositionPairs() {
+        Set<Pair<Integer, Integer>> result = new ProbeHashSet<>();
         for (Map.Entry<Integer, List<Integer>> line : positions.entrySet()) {
             for (int column : line.getValue()) {
                 result.add(new Pair<>(line.getKey(), column));
@@ -37,8 +40,18 @@ public class PositionMap {
         return result;
     }
 
-    public ProbeHashSet<Integer> getLines() {
-        ProbeHashSet<Integer> result = new ProbeHashSet<>();
+    public Set<Triple<Integer, Integer, String>> getPositionTriples() {
+        Set<Triple<Integer, Integer, String>> result = new ProbeHashSet<>();
+        for (Map.Entry<Integer, List<Integer>> line : positions.entrySet()) {
+            for (int column : line.getValue()) {
+                result.add(new Triple<>(line.getKey(), column, word));
+            }
+        }
+        return result;
+    }
+
+    public Set<Integer> getLineNumbers() {
+        Set<Integer> result = new ProbeHashSet<>();
         for (int lineNumber : positions.keySet()) {
             result.add(lineNumber);
         }

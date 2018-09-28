@@ -1,6 +1,8 @@
 package comp3506.assn2.application;
 
 import comp3506.assn2.utils.Pair;
+import comp3506.assn2.utils.Triple;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.io.FileNotFoundException;
@@ -62,8 +64,8 @@ public class AutoTester implements Search {
 
     public List<Integer> wordsOnLine(String[] words) throws IllegalArgumentException {
         List<Integer> result = new ArrayList<>();
-        for (int line: searchApplication.wordsOnLine(words)) {
-            result.add(line);
+        for (int lineNumber: searchApplication.wordsOnLine(words)) {
+            result.add(lineNumber);
         }
         return result;
     }
@@ -71,19 +73,36 @@ public class AutoTester implements Search {
 
     public List<Integer> someWordsOnLine(String[] words) throws IllegalArgumentException {
         List<Integer> result = new ArrayList<>();
-        for (int line: searchApplication.someWordsOnLine(words)) {
-            result.add(line);
+        for (int lineNumber: searchApplication.someWordsOnLine(words)) {
+            result.add(lineNumber);
         }
         return result;
     }
 
     public List<Integer> wordsNotOnLine(String[] wordsRequired, String[] wordsExcluded) throws IllegalArgumentException {
         List<Integer> result = new ArrayList<>();
-        for (int line: searchApplication.wordsNotOnLine(wordsRequired, wordsExcluded)) {
-            result.add(line);
+        for (int lineNumber: searchApplication.wordsNotOnLine(wordsRequired, wordsExcluded)) {
+            result.add(lineNumber);
         }
         return result;
     }
 
+    public List<Triple<Integer,Integer,String>> simpleAndSearch(String[] titles, String[] words)
+            throws IllegalArgumentException {
+        List<Triple<Integer,Integer,String>> result = new ArrayList<>();
+        for (Triple<Integer,Integer,String> triple: searchApplication.simpleAndSearch(titles, words)) {
+            result.add(triple);
+        }
+        return result;
+    }
+
+    public List<Triple<Integer,Integer,String>> simpleOrSearch(String[] titles, String[] words)
+            throws IllegalArgumentException {
+        List<Triple<Integer,Integer,String>> result = new ArrayList<>();
+        for (Triple<Integer,Integer,String> triple: searchApplication.simpleOrSearch(titles, words)) {
+            result.add(triple);
+        }
+        return result;
+    }
 
 }
