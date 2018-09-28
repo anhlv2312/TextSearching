@@ -3,14 +3,12 @@ package comp3506.assn2.application;
 import comp3506.assn2.adts.*;
 import comp3506.assn2.utils.Pair;
 
-public class Work {
+public class Section {
 
-    private String title;
     private Map<Integer, String> lines;
     private Trie<IndexTable> indexTables;
 
-    public Work(String title) {
-        this.title = title;
+    public Section(String title) {
         indexTables = new Trie<>();
         lines = new ProbeHashMap<>();
     }
@@ -34,18 +32,6 @@ public class Work {
             }
             indexTable.addPosition(lineNumber, position);
         }
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Map<Integer, String> getLines() {
-        return lines;
-    }
-
-    public Trie<IndexTable> getIndexTables() {
-        return indexTables;
     }
 
     public int wordCount(String word) throws IllegalArgumentException {
