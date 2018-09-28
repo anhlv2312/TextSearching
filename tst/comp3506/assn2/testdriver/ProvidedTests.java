@@ -177,6 +177,7 @@ public class ProvidedTests {
 				new TestingTriple<>(148047,33,"hoof"));
 		List<TestingTriple<Integer,Integer,String>> searchResult =
 				makeTestingTriple(searchApplication.compoundAndOrSearch(titles, requiredWords, orWords));
+
 		assertThat("Locations of 'obscure' && ('beaver' || 'hoof') were not expected.", searchResult, containsInAnyOrder(expected.toArray()));
 		assertThat("Search for 'obscure' && ('beaver' || 'hoof') returned wrong number of results.", searchResult, hasSize(expected.size()));
 	}

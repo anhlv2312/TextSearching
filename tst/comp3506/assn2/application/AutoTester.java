@@ -114,4 +114,13 @@ public class AutoTester implements Search {
         return result;
     }
 
+    public List<Triple<Integer,Integer,String>> compoundAndOrSearch(String[] titles, String[] wordsRequired, String[] orWords)
+            throws IllegalArgumentException {
+        List<Triple<Integer,Integer,String>> result = new ArrayList<>();
+        for (Triple<Integer,Integer,String> triple: searchApplication.compoundAndOrSearch(titles, wordsRequired, orWords)) {
+            result.add(triple);
+        }
+        return result;
+    }
+
 }
