@@ -3,7 +3,6 @@ package comp3506.assn2.application;
 import comp3506.assn2.adts.*;
 import comp3506.assn2.utils.Pair;
 import comp3506.assn2.utils.Triple;
-import sun.font.TrueTypeFont;
 
 public class Section {
 
@@ -60,7 +59,6 @@ public class Section {
         Set<Pair<Integer, Integer>> result = new ProbeHashSet<>();
 
         String pattern = sanitizeString(phrase);
-        pattern = removeContinuousSpaces(pattern) + " ";
         String firstWord = pattern.split(" ")[0];
         PositionMap positionMap = positionTrie.getElement(firstWord);
 
@@ -308,10 +306,5 @@ public class Section {
     private static String sanitizeString(String string) {
         return string.toLowerCase().replaceAll("[^0-9a-z ']", " ").replaceAll("' | '", "  ");
     }
-
-    private static String removeContinuousSpaces(String string) {
-        return string.toLowerCase().replaceAll(" +", " ").trim();
-    }
-
 
 }
