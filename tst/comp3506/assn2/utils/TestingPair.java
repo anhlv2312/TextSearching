@@ -3,11 +3,9 @@ package comp3506.assn2.utils;
 
 import java.util.Objects;
 
-import comp3506.assn2.utils.Pair;
-
 
 public class TestingPair<L, R> extends Pair<L, R> {
-	
+
 	public TestingPair(L leftValue, R rightValue) {
 		super(leftValue, rightValue);
 	}

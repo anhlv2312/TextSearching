@@ -4,12 +4,12 @@ import comp3506.assn2.adts.*;
 import comp3506.assn2.utils.Pair;
 
 /* [1 pp. 449] */
-public class WordIndex {
+public class IndexTable {
 
     private int total = 0;
     private ProbeHashMap<Integer, List<Integer>> positions;
 
-    public WordIndex() {
+    public IndexTable() {
         positions = new ProbeHashMap<>();
     }
 

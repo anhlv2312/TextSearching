@@ -6,7 +6,7 @@ import comp3506.assn2.adts.Map;
 import comp3506.assn2.adts.ProbeHashSet;
 import comp3506.assn2.adts.Trie;
 import comp3506.assn2.adts.Set;
-import comp3506.assn2.application.WordIndex;
+import comp3506.assn2.application.IndexTable;
 import comp3506.assn2.application.SearchApplication;
 import comp3506.assn2.utils.Pair;
 import org.junit.After;
@@ -71,48 +71,48 @@ public class UnitTests {
     }
 
 
-    @Test
-    public void testSanitizeString() {
-        String string1 = "    That thereby- ?beauty's rose-adline \"might\" never die,";
-        Assert.assertEquals(SearchApplication.sanitizeString(string1), "    that thereby   beauty's rose adline  might  never die ");
+//    @Test
+//    public void testSanitizeString() {
+//        String string1 = "    That thereby- ?beauty's rose-adline \"might\" never die,";
+//        Assert.assertEquals(SearchApplication.sanitizeString(string1), "    that thereby   beauty's rose adline  might  never die ");
+//
+//        String string2 = "THE SONNETS";
+//        assertEquals(SearchApplication.sanitizeString(string2), "the sonnets");
+//    }
 
-        String string2 = "THE SONNETS";
-        assertEquals(SearchApplication.sanitizeString(string2), "the sonnets");
-    }
-
-    @Test
-    public void testTokenizeString() {
-        assertEquals(SearchApplication.tokenizeString("From fairest I creatures A we desire increase,").size(), 8);
-
-        Map<Integer, String> tokens = SearchApplication.tokenizeString("That Rome holds of his name; wherein obscurely");
-        assertEquals(tokens.size(), 8);
-        assertEquals(tokens.get(1), "that");
-        assertEquals(tokens.get(30), "wherein");
-        assertEquals(tokens.get(38), "obscurely");
-
-        tokens = SearchApplication.tokenizeString("    Of Arthur, whom they say is kill'd to-night");
-        assertEquals(tokens.size(), 9);
-        assertEquals(tokens.get(1), null);
-        assertEquals(tokens.get(5), "of");
-        assertEquals(tokens.get(33), "kill'd");
-        assertEquals(tokens.get(40), "to");
-        assertEquals(tokens.get(43), "night");
-
-        assertEquals(SearchApplication.tokenizeString("THE SONNETS ").size(), 2);
-        assertEquals(SearchApplication.tokenizeString("THE SONNETS").size(), 2);
-    }
+//    @Test
+//    public void testTokenizeString() {
+//        assertEquals(SearchApplication.tokenizeString("From fairest I creatures A we desire increase,").size(), 8);
+//
+//        Map<Integer, String> tokens = SearchApplication.tokenizeString("That Rome holds of his name; wherein obscurely");
+//        assertEquals(tokens.size(), 8);
+//        assertEquals(tokens.get(1), "that");
+//        assertEquals(tokens.get(30), "wherein");
+//        assertEquals(tokens.get(38), "obscurely");
+//
+//        tokens = SearchApplication.tokenizeString("    Of Arthur, whom they say is kill'd to-night");
+//        assertEquals(tokens.size(), 9);
+//        assertEquals(tokens.get(1), null);
+//        assertEquals(tokens.get(5), "of");
+//        assertEquals(tokens.get(33), "kill'd");
+//        assertEquals(tokens.get(40), "to");
+//        assertEquals(tokens.get(43), "night");
+//
+//        assertEquals(SearchApplication.tokenizeString("THE SONNETS ").size(), 2);
+//        assertEquals(SearchApplication.tokenizeString("THE SONNETS").size(), 2);
+//    }
 
     @Test
     public void testWordIndexes() {
-        Trie<WordIndex> wordIndexes = new Trie<>();
+        Trie<IndexTable> wordIndexes = new Trie<>();
         wordIndexes.insert("test");
-        WordIndex wordIndex = new WordIndex();
-        wordIndex.addPosition(3, 2);
-        assertEquals(wordIndex.getPositions().size(), 1);
-        assertEquals((int) wordIndex.getPositions().get(0).getLeftValue(), 3);
-        assertEquals((int) wordIndex.getPositions().get(0).getRightValue(), 2);
-        wordIndex.addPosition(4, 10);
-        assertEquals(wordIndex.getPositions().size(), 2);
+        IndexTable indexTable = new IndexTable();
+        indexTable.addPosition(3, 2);
+        assertEquals(indexTable.getPositions().size(), 1);
+        assertEquals((int) indexTable.getPositions().get(0).getLeftValue(), 3);
+        assertEquals((int) indexTable.getPositions().get(0).getRightValue(), 2);
+        indexTable.addPosition(4, 10);
+        assertEquals(indexTable.getPositions().size(), 2);
     }
 
     @Test

@@ -2,6 +2,7 @@ package comp3506.assn2.application;
 
 import comp3506.assn2.adts.*;
 import comp3506.assn2.utils.Pair;
+import comp3506.assn2.utils.Triple;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -10,28 +11,23 @@ import java.io.IOException;
 
 public class SearchApplication {
 
-    private Map<String, Integer> workIndexes;
+    private Map<Integer, String> workIndexes;
     private List<String> stopWords;
     private Map<Integer, String> lines;
-    private Trie<WordIndex> wordIndexes;
+    private Trie<IndexTable> indexTables;
 
     public SearchApplication(String documentFileName, String indexFileName, String stopWordsFileName)
             throws FileNotFoundException, IllegalArgumentException {
 
         lines = new ProbeHashMap<>();
-        wordIndexes = new Trie<>();
+        indexTables = new Trie<>();
+        workIndexes = new ProbeHashMap<>();
+        stopWords = new ArrayList<>();
 
-        if (indexFileName != null && indexFileName.length() > 0) {
-            workIndexes = getWorkIndexes(indexFileName);
-        } else {
-            workIndexes = new ProbeHashMap<>();
-            workIndexes.put("", 0);
-        }
+        getWorkIndexes(indexFileName);
 
-        if (stopWordsFileName != null && stopWordsFileName.length() > 0) {
-            stopWords = getStopWords(stopWordsFileName);
-        } else {
-            stopWords = new ArrayList<>();
+        for (int a : workIndexes.keySet()){
+            System.out.println(a);
         }
 
         if (documentFileName != null && documentFileName.length() > 0) {
@@ -41,45 +37,9 @@ public class SearchApplication {
         }
 
 
-    }
-
-    private void buildWordIndexes(String documentFileName) throws FileNotFoundException {
-        int lineNumber = 0;
-        try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                lineNumber++;
-                processLine(lineNumber, line);
-            }
-        } catch (IOException ex) {
-            throw new FileNotFoundException(documentFileName);
-        }
+        getStopWords(stopWordsFileName);
 
     }
-
-    private void processLine(int lineNumber, String line) {
-
-        if (line.trim().length() == 0) {
-            return;
-        }
-
-        lines.put(lineNumber, line);
-        Map<Integer, String> tokens = tokenizeString(line);
-
-        for (Map.Entry<Integer, String> token: tokens.entrySet()) {
-            int position = token.getKey();
-            String word = token.getValue();
-
-            wordIndexes.insert(token.getValue());
-            WordIndex wordIndex = wordIndexes.getElement(word);
-            if (wordIndex == null) {
-                wordIndex = new WordIndex();
-                wordIndexes.setElement(word, wordIndex);
-            }
-            wordIndex.addPosition(lineNumber, position);
-        }
-    }
-
 
     public int wordCount(String word) throws IllegalArgumentException {
 
@@ -87,9 +47,9 @@ public class SearchApplication {
             throw new IllegalArgumentException();
         }
 
-        WordIndex wordIndex = wordIndexes.getElement(word.toLowerCase().trim());
-        if (wordIndex != null) {
-            return wordIndex.size();
+        IndexTable indexTable = indexTables.getElement(word.toLowerCase().trim());
+        if (indexTable != null) {
+            return indexTable.size();
         } else {
             return 0;
         }
@@ -108,13 +68,13 @@ public class SearchApplication {
         pattern = removeContinuousSpaces(pattern) + " ";
         String firstWord = pattern.split(" ")[0];
 
-        WordIndex wordIndex = wordIndexes.getElement(firstWord);
+        IndexTable indexTable = indexTables.getElement(firstWord);
 
-        if (wordIndex == null) {
+        if (indexTable == null) {
             return result;
         }
 
-        for (Pair<Integer, Integer> position : wordIndex.getPositions()) {
+        for (Pair<Integer, Integer> position : indexTable.getPositions()) {
             String text = lines.get(position.getLeftValue());
             text = sanitizeString(text);
             text = text.substring(position.getRightValue() - 1);
@@ -139,8 +99,8 @@ public class SearchApplication {
             throw new IllegalArgumentException();
         }
         List<Pair<Integer,Integer>> result = new ArrayList<>();
-        for (WordIndex wordIndex : wordIndexes.getDescendantElements(prefix.toLowerCase().trim())) {
-            for (Pair<Integer, Integer> position: wordIndex.getPositions()) {
+        for (IndexTable indexTable : indexTables.getDescendantElements(prefix.toLowerCase().trim())) {
+            for (Pair<Integer, Integer> position: indexTable.getPositions()) {
                 result.add(position);
             }
         }
@@ -148,7 +108,7 @@ public class SearchApplication {
     }
 
 
-    // TODO: refine this function
+    // TODO: refine this function, can find for the lines contains first word then check every line
     public Set<Integer> wordsOnLine(String[] words) throws IllegalArgumentException {
         if (words == null || words.length == 0) {
             throw new IllegalArgumentException();
@@ -163,11 +123,11 @@ public class SearchApplication {
         Set<Integer> result = null;
         for (String word: words) {
             Set<Integer> lineNumbers;
-            WordIndex wordIndex = wordIndexes.getElement(word.toLowerCase().trim());
-            if (wordIndex == null) {
+            IndexTable indexTable = indexTables.getElement(word.toLowerCase().trim());
+            if (indexTable == null) {
                 return new ProbeHashSet<>();
             } else {
-                lineNumbers = wordIndex.getLines();
+                lineNumbers = indexTable.getLines();
                 if (result == null) {
                     result = lineNumbers;
                 } else {
@@ -193,12 +153,11 @@ public class SearchApplication {
         Set<Integer> result = new ProbeHashSet<>();
 
         for (String word: words) {
-            WordIndex wordIndex = wordIndexes.getElement(word.toLowerCase().trim());
-            if (wordIndex != null) {
-                result.addAll(wordIndex.getLines());
+            IndexTable indexTable = indexTables.getElement(word.toLowerCase().trim());
+            if (indexTable != null) {
+                result.addAll(indexTable.getLines());
             }
         }
-
 
         return result;
     }
@@ -218,18 +177,28 @@ public class SearchApplication {
         Set<Integer> result = wordsOnLine(wordsRequired);
 
         for (String word: wordsExcluded) {
-            WordIndex wordIndex = wordIndexes.getElement(word.toLowerCase().trim());
-            if (wordIndex != null) {
-                result.removeAll(wordIndex.getLines());
+            IndexTable indexTable = indexTables.getElement(word.toLowerCase().trim());
+            if (indexTable != null) {
+                result.removeAll(indexTable.getLines());
             }
         }
-
-
         return result;
     }
 
 
-    public static Map<Integer, String> tokenizeString(String string) {
+//    public List<Triple<Integer,Integer,String>> simpleAndSearch(String[] titles, String[] words)
+//            throws IllegalArgumentException {
+//        if (titles != null && titles.length workIndexes.get(titles) == null) {
+//
+//        }
+//    }
+
+
+
+
+
+
+    private static Map<Integer, String> tokenizeString(String string) {
         string = sanitizeString(string);
         StringBuilder sb = new StringBuilder();
         Map<Integer, String> tokens = new ProbeHashMap<>();
@@ -249,7 +218,7 @@ public class SearchApplication {
         return tokens;
     }
 
-    public static String sanitizeString(String string) {
+    private static String sanitizeString(String string) {
         return string.toLowerCase().replaceAll("[^0-9a-z ']", " ").replaceAll("' | '", "  ");
     }
 
@@ -257,33 +226,68 @@ public class SearchApplication {
         return string.toLowerCase().replaceAll(" +", " ").trim();
     }
 
-
-    private static Map<String, Integer> getWorkIndexes(String indexFileName) throws FileNotFoundException {
-        Map<String, Integer> works = new ProbeHashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(indexFileName))) {
+    private void buildWordIndexes(String documentFileName) throws FileNotFoundException {
+        int lineNumber = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {
             String line;
+
             while ((line = br.readLine()) != null) {
-                String title = line.split(",")[0].trim();
-                int startLine = Integer.parseInt(line.split(",")[1].trim());
-                works.put(title, startLine);
+                lineNumber++;
+                processLine(lineNumber, line);
             }
         } catch (IOException ex) {
-            throw new FileNotFoundException(indexFileName);
+            throw new FileNotFoundException(documentFileName);
         }
-        return works;
     }
 
-    private static List<String> getStopWords(String stopWordsFileName) throws FileNotFoundException {
-        List<String> stopWords = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(stopWordsFileName))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                stopWords.add(line.trim());
-            }
-        } catch (IOException ex) {
-            throw new FileNotFoundException(stopWordsFileName);
+    private void processLine(int lineNumber, String line) {
+
+        if (line.trim().length() == 0) {
+            return;
         }
-        return stopWords;
+
+        lines.put(lineNumber, line);
+        Map<Integer, String> tokens = tokenizeString(line);
+
+        for (Map.Entry<Integer, String> token: tokens.entrySet()) {
+            int position = token.getKey();
+            String word = token.getValue();
+
+            indexTables.insert(token.getValue());
+            IndexTable indexTable = indexTables.getElement(word);
+            if (indexTable == null) {
+                indexTable = new IndexTable();
+                indexTables.setElement(word, indexTable);
+            }
+            indexTable.addPosition(lineNumber, position);
+        }
+    }
+
+    private void getWorkIndexes(String indexFileName) throws FileNotFoundException {
+        if (indexFileName != null && indexFileName.length() > 0) {
+            try (BufferedReader br = new BufferedReader(new FileReader(indexFileName))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    int startLine = Integer.parseInt(line.split(",")[1].trim());
+                    workIndexes.put(startLine, line.split(",")[0].trim());
+                }
+            } catch (IOException ex) {
+                throw new FileNotFoundException(indexFileName);
+            }
+        }
+    }
+
+    private void getStopWords(String stopWordsFileName) throws FileNotFoundException {
+        if (stopWordsFileName != null && stopWordsFileName.length() > 0) {
+            try (BufferedReader br = new BufferedReader(new FileReader(stopWordsFileName))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    stopWords.add(line.trim());
+                }
+            } catch (IOException ex) {
+                throw new FileNotFoundException(stopWordsFileName);
+            }
+        }
     }
 
 }
