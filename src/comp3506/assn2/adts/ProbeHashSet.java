@@ -9,14 +9,6 @@ public class ProbeHashSet<K> implements Set<K> {
         table = new ProbeHashMap<>();
     }
 
-    public ProbeHashSet(int cap) {
-        table = new ProbeHashMap<>(cap);
-    }
-
-    public ProbeHashSet(int cap, int p) {
-        table = new ProbeHashMap<>(cap, p);
-    }
-
     public int size() {
         return table.size();
     }
@@ -31,11 +23,7 @@ public class ProbeHashSet<K> implements Set<K> {
     }
 
     public boolean remove(K key) {
-        if (table.remove(key) == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return (table.remove(key) == null);
     }
 
     public boolean contains(K key) {
@@ -43,16 +31,13 @@ public class ProbeHashSet<K> implements Set<K> {
     }
 
     public void addAll(Set<K> target) {
-        Iterator<K> keySetIterator = target.iterator();
-        while (keySetIterator.hasNext()) {
-            this.add(keySetIterator.next());
+        for (K key : target) {
+            this.add(key);
         }
     }
 
     public void retainAll(Set<K> target) {
-        Iterator<K> keySetIterator = this.iterator();
-        while (keySetIterator.hasNext()) {
-            K key = keySetIterator.next();
+        for (K key : this) {
             if (!target.contains(key)) {
                 this.remove(key);
             }
@@ -60,9 +45,8 @@ public class ProbeHashSet<K> implements Set<K> {
     }
 
     public void removeAll(Set<K> target) {
-        Iterator<K> keySetIterator = target.iterator();
-        while (keySetIterator.hasNext()) {
-            this.remove(keySetIterator.next());
+        for (K key : target) {
+            this.remove(key);
         }
     }
 

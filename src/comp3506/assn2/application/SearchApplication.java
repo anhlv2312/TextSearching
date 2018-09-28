@@ -18,18 +18,17 @@ public class SearchApplication {
     public SearchApplication(String documentFileName, String indexFileName, String stopWordsFileName)
             throws FileNotFoundException, IllegalArgumentException {
 
+        if (documentFileName == null || documentFileName.length() == 0) {
+            throw new IllegalArgumentException();
+        }
+
         indexes = new ArrayList<>();
         stopWords = new ArrayList<>();
         sections = new ProbeHashMap<>();
 
-        getWorkIndexes(indexFileName);
-
-        if (documentFileName != null && documentFileName.length() > 0) {
-            buildWordIndexes(documentFileName);
-        } else {
-            throw new IllegalArgumentException();
-        }
         getStopWords(stopWordsFileName);
+        getWorkIndexes(indexFileName);
+        buildWordIndexes(documentFileName);
 
     }
 
@@ -228,5 +227,6 @@ public class SearchApplication {
             }
         }
     }
+
 
 }

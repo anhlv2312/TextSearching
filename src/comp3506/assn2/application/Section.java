@@ -20,7 +20,7 @@ public class Section {
             return;
         }
         lines.put(lineNumber, text);
-        Map<Integer, String> tokens = Utility.tokenizeString(text);
+        Map<Integer, String> tokens = tokenizeString(text);
 
         for (Map.Entry<Integer, String> token: tokens.entrySet()) {
             int position = token.getKey();
@@ -59,15 +59,15 @@ public class Section {
 
         Set<Pair<Integer, Integer>> result = new ProbeHashSet<>();
 
-        String pattern = Utility.sanitizeString(phrase);
-        pattern = Utility.removeContinuousSpaces(pattern) + " ";
+        String pattern = sanitizeString(phrase);
+        pattern = removeContinuousSpaces(pattern) + " ";
         String firstWord = pattern.split(" ")[0];
         PositionMap positionMap = positionTrie.getElement(firstWord);
 
         if (positionMap != null) {
             for (Pair<Integer, Integer> position : positionMap.getPositionPairs()) {
                 String text = lines.get(position.getLeftValue());
-                text = Utility.sanitizeString(text);
+                text = sanitizeString(text);
                 text = text.substring(position.getRightValue() - 1);
                 if (text.length() >= pattern.length()) {
                     boolean match = true;
@@ -284,5 +284,34 @@ public class Section {
 
         return result;
     }
+
+    private static Map<Integer, String> tokenizeString(String string) {
+        string = sanitizeString(string);
+        StringBuilder sb = new StringBuilder();
+        Map<Integer, String> tokens = new ProbeHashMap<>();
+        for (int i = 0; i < string.length(); i++) {
+            if (string.charAt(i) != ' ') {
+                sb.append(string.charAt(i));
+            } else {
+                if (sb.length() > 0) {
+                    tokens.put(i - sb.length() + 1, sb.toString());
+                    sb = new StringBuilder();
+                }
+            }
+            if ((i == string.length() - 1) && (sb.length() > 0)) {
+                tokens.put((i + 1) - sb.length() + 1, sb.toString());
+            }
+        }
+        return tokens;
+    }
+
+    private static String sanitizeString(String string) {
+        return string.toLowerCase().replaceAll("[^0-9a-z ']", " ").replaceAll("' | '", "  ");
+    }
+
+    private static String removeContinuousSpaces(String string) {
+        return string.toLowerCase().replaceAll(" +", " ").trim();
+    }
+
 
 }
