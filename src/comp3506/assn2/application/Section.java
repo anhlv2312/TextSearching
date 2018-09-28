@@ -154,8 +154,14 @@ public class Section {
     }
 
     public Set<Integer> wordsNotOnLine(String[] wordsRequired, String[] wordsExcluded) throws IllegalArgumentException {
-        if (wordsExcluded == null || wordsExcluded.length == 0) {
+        if (wordsRequired == null || wordsRequired.length == 0 || wordsExcluded == null || wordsExcluded.length == 0) {
             throw new IllegalArgumentException();
+        }
+
+        for (String word: wordsRequired) {
+            if (word == null || word.length() == 0) {
+                throw new IllegalArgumentException();
+            }
         }
 
         for (String word: wordsExcluded) {
@@ -224,5 +230,34 @@ public class Section {
         return result;
     }
 
+
+    public Set<Triple<Integer,Integer,String>> simpleNotSearch(String[] wordsRequired, String[] wordsExcluded)
+            throws IllegalArgumentException {
+
+        if (wordsRequired == null || wordsRequired.length == 0 || wordsExcluded == null || wordsExcluded.length == 0) {
+            throw new IllegalArgumentException();
+        }
+
+        for (String word: wordsRequired) {
+            if (word == null || word.length() == 0) {
+                throw new IllegalArgumentException();
+            }
+        }
+
+        for (String word: wordsExcluded) {
+            if (word == null || word.length() == 0) {
+                throw new IllegalArgumentException();
+            }
+        }
+
+        for (String word: wordsExcluded) {
+            PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
+            if (positionMap != null) {
+                return new ProbeHashSet<>();
+            }
+        }
+
+        return simpleAndSearch(wordsRequired);
+    }
 
 }

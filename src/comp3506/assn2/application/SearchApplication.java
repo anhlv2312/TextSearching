@@ -122,6 +122,25 @@ public class SearchApplication {
 
     }
 
+    public Set<Triple<Integer,Integer,String>> simpleNotSearch(String[] titles, String[] wordsRequired, String[] wordsExcluded)
+            throws IllegalArgumentException {
+
+        if (titles == null || titles.length == 0) {
+            titles = new String[indexes.size()];
+            for (int i = 0; i < titles.length; i++) {
+                titles[i] = indexes.get(i).getLeftValue();
+            }
+        }
+
+        Set<Triple<Integer, Integer, String>> result = new ProbeHashSet<>();
+        for (String title: titles) {
+            Section section = sections.get(title);
+            result.addAll(section.simpleNotSearch(wordsRequired, wordsExcluded));
+        }
+        return result;
+
+    }
+
     private void buildWordIndexes(String documentFileName) throws FileNotFoundException {
         int lineNumber = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {

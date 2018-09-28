@@ -105,4 +105,13 @@ public class AutoTester implements Search {
         return result;
     }
 
+    public List<Triple<Integer,Integer,String>> simpleNotSearch(String[] titles, String[] wordsRequired, String[] wordsExcluded)
+            throws IllegalArgumentException {
+        List<Triple<Integer,Integer,String>> result = new ArrayList<>();
+        for (Triple<Integer,Integer,String> triple: searchApplication.simpleNotSearch(titles, wordsRequired, wordsExcluded)) {
+            result.add(triple);
+        }
+        return result;
+    }
+
 }
