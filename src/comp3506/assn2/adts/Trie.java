@@ -48,7 +48,9 @@ public class Trie<T> {
     public List<T> getDescendantElements(String prefix) {
         List<T> elements = new ArrayList<>();
         TrieNode<T> current = findNode(prefix);
-        getChildElements(current, elements);
+        if (current != null) {
+            getChildElements(current, elements);
+        }
         return elements;
     }
 

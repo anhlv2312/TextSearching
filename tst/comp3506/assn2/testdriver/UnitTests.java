@@ -20,6 +20,7 @@ public class UnitTests {
 
     @Before
     public void before() throws Exception {
+//        search1 = new SearchApplication("files/shakespeare.txt", "files/shakespeare-index.txt", "files/stop-words.txt");
         search1 = new SearchApplication("./files/test-input-1.txt", null, null);
         search2 = new SearchApplication("./files/test-input-2.txt", null, null);
     }
