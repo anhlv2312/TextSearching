@@ -18,7 +18,7 @@ public class UnitTests {
 
     @Before
     public void before() throws Exception {
-        search1 = new SearchApplication("./files/test-input-1.txt", null, null);
+        search1 = new SearchApplication("./files/test-input-1.txt", null, "./files/stop-words.txt");
         search2 = new SearchApplication("./files/test-input-2.txt", null, null);
     }
 
@@ -166,7 +166,7 @@ public class UnitTests {
         assertEquals(search1.wordsOnLine(new String[]{"flame", "with"}).size(), 1);
         assertEquals(search1.wordsOnLine(new String[]{"test"}).size(), 0);
         assertEquals(search1.wordsOnLine(new String[]{"test", "the"}).size(), 0);
-        assertEquals(search1.wordsOnLine(new String[]{"the"}).size(), 7);
+        assertEquals(search1.wordsOnLine(new String[]{"the"}).size(), 0);
         assertEquals(search1.wordsOnLine(new String[]{"the", "world's"}).size(), 2);
     }
 
@@ -174,24 +174,19 @@ public class UnitTests {
     public void testSomeWordOnLine() {
         assertEquals(search1.someWordsOnLine(new String[]{"flame", "with"}).size(), 1);
         assertEquals(search1.someWordsOnLine(new String[]{"test"}).size(), 0);
-        assertEquals(search1.someWordsOnLine(new String[]{"test", "the"}).size(), 7);
-        assertEquals(search1.someWordsOnLine(new String[]{"the"}).size(), 7);
-        assertEquals(search1.someWordsOnLine(new String[]{"the", "and", "light's"}).size(), 9);
-        assertTrue(search1.someWordsOnLine(new String[]{"the", "and", "light's"}).contains(1));
-        assertTrue(search1.someWordsOnLine(new String[]{"the", "and", "light's"}).contains(22));
-        assertTrue(search1.someWordsOnLine(new String[]{"the", "and", "light's"}).contains(24));
+        assertEquals(search1.someWordsOnLine(new String[]{"test", "the"}).size(), 0);
+        assertEquals(search1.someWordsOnLine(new String[]{"The"}).size(), 0);
+        assertEquals(search1.someWordsOnLine(new String[]{"the", "and", "light's"}).size(), 1);
+        assertTrue(search1.someWordsOnLine(new String[]{"the", "and", "light's"}).contains(16));
     }
 
     @Test
     public void testWordsNotOnLine() {
-        assertEquals(search1.wordsNotOnLine(new String[]{"flame", "with"}, new String[]{"with"}).size(), 0);
+        assertEquals(search1.wordsNotOnLine(new String[]{"flame", "with"}, new String[]{"with"}).size(), 1);
         assertTrue(search1.wordsNotOnLine(new String[]{"flame", "with"}, new String[]{"tester"}).contains(16));
         assertEquals(search1.wordsNotOnLine(new String[]{"the", "world's"}, new String[]{"art"}).size(), 1);
         assertTrue(search1.wordsNotOnLine(new String[]{"the", "world's"}, new String[]{"art"}).contains(24));
-        assertEquals(search1.wordsNotOnLine(new String[]{"the"}, new String[]{"and"}).size(), 5);
-        assertTrue(search1.wordsNotOnLine(new String[]{"the"}, new String[]{"and"}).contains(23));
-        assertTrue(search1.wordsNotOnLine(new String[]{"the"}, new String[]{"and"}).contains(1));
-        assertFalse(search1.wordsNotOnLine(new String[]{"the"}, new String[]{"and"}).contains(20));
+        assertEquals(search1.wordsNotOnLine(new String[]{"the"}, new String[]{"and"}).size(), 0);
     }
 
 }

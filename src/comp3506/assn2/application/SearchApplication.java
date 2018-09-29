@@ -12,7 +12,7 @@ import java.io.IOException;
 public class SearchApplication {
 
     private List<Pair<String, Integer>> indexes;
-    private List<String> stopWords;
+    private Set<String> stopWords;
     private Map<String, Section> sections;
 
     public SearchApplication(String documentFileName, String indexFileName, String stopWordsFileName)
@@ -23,7 +23,7 @@ public class SearchApplication {
         }
 
         indexes = new ArrayList<>();
-        stopWords = new ArrayList<>();
+        stopWords = new ProbeHashSet<>();
         sections = new ProbeHashMap<>();
 
         getStopWords(stopWordsFileName);
@@ -48,8 +48,8 @@ public class SearchApplication {
         return result;
     }
 
-    public Set<Pair<Integer,Integer>> prefixOccurrence(String prefix) throws IllegalArgumentException {
-        Set<Pair<Integer,Integer>> result = new ProbeHashSet<>();
+    public Set<Pair<Integer, Integer>> prefixOccurrence(String prefix) throws IllegalArgumentException {
+        Set<Pair<Integer, Integer>> result = new ProbeHashSet<>();
         for (Section section : sections.values()) {
             result.addAll(section.prefixOccurrence(prefix));
         }
@@ -59,7 +59,7 @@ public class SearchApplication {
     public Set<Integer> wordsOnLine(String[] words) throws IllegalArgumentException {
         Set<Integer> result = new ProbeHashSet<>();
         for (Section section : sections.values()) {
-            result.addAll(section.wordsOnLine(words));
+            result.addAll(section.wordsOnLine(words, stopWords));
         }
         return result;
     }
@@ -67,7 +67,7 @@ public class SearchApplication {
     public Set<Integer> someWordsOnLine(String[] words) throws IllegalArgumentException {
         Set<Integer> result = new ProbeHashSet<>();
         for (Section section : sections.values()) {
-            result.addAll(section.someWordsOnLine(words));
+            result.addAll(section.someWordsOnLine(words, stopWords));
         }
         return result;
     }
@@ -76,13 +76,13 @@ public class SearchApplication {
     public Set<Integer> wordsNotOnLine(String[] wordsRequired, String[] wordsExcluded) throws IllegalArgumentException {
         Set<Integer> result = new ProbeHashSet<>();
         for (Section section : sections.values()) {
-            result.addAll(section.wordsNotOnLine(wordsRequired, wordsExcluded));
+            result.addAll(section.wordsNotOnLine(wordsRequired, wordsExcluded, stopWords));
         }
         return result;
     }
 
 
-    public Set<Triple<Integer,Integer,String>> simpleAndSearch(String[] titles, String[] words)
+    public Set<Triple<Integer, Integer, String>> simpleAndSearch(String[] titles, String[] words)
             throws IllegalArgumentException {
 
         if (titles == null || titles.length == 0) {
@@ -93,10 +93,10 @@ public class SearchApplication {
         }
 
         Set<Triple<Integer, Integer, String>> result = new ProbeHashSet<>();
-        for (String title: titles) {
+        for (String title : titles) {
             Section section = sections.get(title);
             if (section != null) {
-                result.addAll(section.simpleAndSearch(words));
+                result.addAll(section.simpleAndSearch(words, stopWords));
             }
         }
         return result;
@@ -104,7 +104,7 @@ public class SearchApplication {
     }
 
 
-    public Set<Triple<Integer,Integer,String>> simpleOrSearch(String[] titles, String[] words)
+    public Set<Triple<Integer, Integer, String>> simpleOrSearch(String[] titles, String[] words)
             throws IllegalArgumentException {
 
         if (titles == null || titles.length == 0) {
@@ -115,17 +115,17 @@ public class SearchApplication {
         }
 
         Set<Triple<Integer, Integer, String>> result = new ProbeHashSet<>();
-        for (String title: titles) {
+        for (String title : titles) {
             Section section = sections.get(title);
             if (section != null) {
-                result.addAll(section.simpleOrSearch(words));
+                result.addAll(section.simpleOrSearch(words, stopWords));
             }
         }
         return result;
 
     }
 
-    public Set<Triple<Integer,Integer,String>> simpleNotSearch(String[] titles, String[] wordsRequired, String[] wordsExcluded)
+    public Set<Triple<Integer, Integer, String>> simpleNotSearch(String[] titles, String[] wordsRequired, String[] wordsExcluded)
             throws IllegalArgumentException {
 
         if (titles == null || titles.length == 0) {
@@ -136,17 +136,17 @@ public class SearchApplication {
         }
 
         Set<Triple<Integer, Integer, String>> result = new ProbeHashSet<>();
-        for (String title: titles) {
+        for (String title : titles) {
             Section section = sections.get(title);
             if (section != null) {
-                result.addAll(section.simpleNotSearch(wordsRequired, wordsExcluded));
+                result.addAll(section.simpleNotSearch(wordsRequired, wordsExcluded, stopWords));
             }
         }
         return result;
 
     }
 
-    public Set<Triple<Integer,Integer,String>> compoundAndOrSearch(String[] titles, String[] wordsRequired, String[] orWords)
+    public Set<Triple<Integer, Integer, String>> compoundAndOrSearch(String[] titles, String[] wordsRequired, String[] orWords)
             throws IllegalArgumentException {
 
         if (titles == null || titles.length == 0) {
@@ -157,13 +157,12 @@ public class SearchApplication {
         }
 
         Set<Triple<Integer, Integer, String>> result = new ProbeHashSet<>();
-        for (String title: titles) {
+        for (String title : titles) {
             Section section = sections.get(title);
             if (section != null) {
-                result.addAll(section.compoundAndOrSearch(wordsRequired, orWords));
+                result.addAll(section.compoundAndOrSearch(wordsRequired, orWords, stopWords));
             }
         }
-
 
 
         return result;
@@ -182,7 +181,7 @@ public class SearchApplication {
                     lastLine = indexes.get(i + 1).getRightValue() - 1;
                 }
                 Section section = new Section();
-                while ((lastLine < 0 || lineNumber < lastLine-1)) {
+                while ((lastLine < 0 || lineNumber < lastLine - 1)) {
                     line = br.readLine();
                     if (line != null) {
                         lineNumber++;
@@ -220,7 +219,7 @@ public class SearchApplication {
             try (BufferedReader br = new BufferedReader(new FileReader(stopWordsFileName))) {
                 String line;
                 while ((line = br.readLine()) != null) {
-                    stopWords.add(line.trim());
+                    stopWords.add(line.toLowerCase().trim());
                 }
             } catch (IOException ex) {
                 throw new FileNotFoundException(stopWordsFileName);

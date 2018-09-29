@@ -28,14 +28,14 @@ public class ManualTests {
     public void testPhraseOccurrence() {
 
         Pair<Integer, Integer> phraseOccurrence;
-//        phraseOccurrence = searchApplication.phraseOccurrence("beard.-Prythee say on. He's for a jig or a tale of bawdry, or he sleeps. Say on; come to Hecuba. FIRST").iterator().next();
-//        assertEquals((int)phraseOccurrence.getLeftValue(), 25521);
-//        assertEquals((int)phraseOccurrence.getRightValue(), 37);
-//
-//
-//        phraseOccurrence = searchApplication.phraseOccurrence("own bud buriest").iterator().next();
-//        assertEquals((int)phraseOccurrence.getLeftValue(), 21);
-//        assertEquals((int)phraseOccurrence.getRightValue(), 14);
+        phraseOccurrence = searchApplication.phraseOccurrence("beard.-Prythee say on. He's for a jig or a tale of bawdry, or he sleeps. Say on; come to Hecuba. FIRST").iterator().next();
+        assertEquals((int)phraseOccurrence.getLeftValue(), 25521);
+        assertEquals((int)phraseOccurrence.getRightValue(), 37);
+
+
+        phraseOccurrence = searchApplication.phraseOccurrence("own bud buriest").iterator().next();
+        assertEquals((int)phraseOccurrence.getLeftValue(), 21);
+        assertEquals((int)phraseOccurrence.getRightValue(), 14);
 
 
         phraseOccurrence = searchApplication.phraseOccurrence("sonnets 1 From").iterator().next();
@@ -57,7 +57,6 @@ public class ManualTests {
 
     @Test
     public void testWordOnLine() {
-        assertEquals(searchApplication.wordsOnLine(new String[]{"flame", "with"}).size(), 1);
         assertEquals(searchApplication.wordsOnLine(new String[]{"glass", "and"}).size(), 25);
         assertEquals(searchApplication.wordsOnLine(new String[]{"hymns", "heaven's"}).size(), 1);
 
@@ -72,7 +71,7 @@ public class ManualTests {
 
     @Test
     public void testWordsNotOnLine() {
-        assertEquals(searchApplication.wordsNotOnLine(new String[]{"hymns", "heaven's"}, new String[]{"at"}).size(), 0);
+        assertEquals(searchApplication.wordsNotOnLine(new String[]{"hymns", "heaven's"}, new String[]{"sings"}).size(), 0);
     }
 
 }

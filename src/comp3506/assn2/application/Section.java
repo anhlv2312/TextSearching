@@ -14,6 +14,34 @@ public class Section {
         lines = new ProbeHashMap<>();
     }
 
+    private static Map<Integer, String> tokenizeString(String string) {
+        string = sanitizeString(string);
+        StringBuilder sb = new StringBuilder();
+        Map<Integer, String> tokens = new ProbeHashMap<>();
+        for (int i = 0; i < string.length(); i++) {
+            if (string.charAt(i) != ' ') {
+                sb.append(string.charAt(i));
+            } else {
+                if (sb.length() > 0) {
+                    tokens.put(i - sb.length() + 1, sb.toString());
+                    sb = new StringBuilder();
+                }
+            }
+            if ((i == string.length() - 1) && (sb.length() > 0)) {
+                tokens.put((i + 1) - sb.length() + 1, sb.toString());
+            }
+        }
+        return tokens;
+    }
+
+    private static String sanitizeString(String string) {
+        return string.toLowerCase().replaceAll("[^0-9a-z ']", " ").replaceAll("' | '", "  ");
+    }
+
+    private static String removeContinuousSpaces(String string) {
+        return string.toLowerCase().replaceAll(" +", " ").trim();
+    }
+
     public void addLine(int lineNumber, String text) {
         if (text.trim().length() == 0) {
             return;
@@ -21,7 +49,7 @@ public class Section {
         lines.put(lineNumber, text);
         Map<Integer, String> tokens = tokenizeString(text);
 
-        for (Map.Entry<Integer, String> token: tokens.entrySet()) {
+        for (Map.Entry<Integer, String> token : tokens.entrySet()) {
             int position = token.getKey();
             String word = token.getValue();
 
@@ -71,7 +99,7 @@ public class Section {
                 text = text.substring(position.getRightValue() - 1);
                 StringBuilder sb = new StringBuilder(text);
                 while (sb.length() < pattern.length()) {
-                    lineNumber ++;
+                    lineNumber++;
                     String nextLine = lines.get(lineNumber);
                     if (nextLine != null) {
                         sb.append(" ");
@@ -80,10 +108,9 @@ public class Section {
                 }
                 text = sb.toString();
                 text = sanitizeString(text);
-                text = removeContinuousSpaces(text) + " ";;
+                text = removeContinuousSpaces(text) + " ";
+                ;
 
-                System.out.println(pattern);
-                System.out.println(text);
                 boolean match = true;
                 for (int i = 0; i < pattern.length(); i++) {
 
@@ -101,31 +128,35 @@ public class Section {
         return result;
     }
 
-    public Set<Pair<Integer,Integer>> prefixOccurrence(String prefix) throws IllegalArgumentException {
+    public Set<Pair<Integer, Integer>> prefixOccurrence(String prefix) throws IllegalArgumentException {
         if (prefix == null || prefix.length() == 0) {
             throw new IllegalArgumentException();
         }
-        Set<Pair<Integer,Integer>> result = new ProbeHashSet<>();
+        Set<Pair<Integer, Integer>> result = new ProbeHashSet<>();
         for (PositionMap positionMap : positionTrie.getDescendantElements(prefix.toLowerCase().trim())) {
-            for (Pair<Integer, Integer> position: positionMap.getPositionPairs()) {
+            for (Pair<Integer, Integer> position : positionMap.getPositionPairs()) {
                 result.add(position);
             }
         }
         return result;
     }
 
-
-    public Set<Integer> wordsOnLine(String[] words) throws IllegalArgumentException {
+    public Set<Integer> wordsOnLine(String[] words, Set<String> stopWords) throws IllegalArgumentException {
         if (words == null || words.length == 0) {
             throw new IllegalArgumentException();
         }
 
         Set<Integer> result = new ProbeHashSet<>();
 
-        for (String word: words) {
+        for (String word : words) {
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
+
+            if (stopWords.contains(word.toLowerCase().trim())) {
+                continue;
+            }
+
             Set<Integer> lineNumbers;
             PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
             if (positionMap == null) {
@@ -143,17 +174,22 @@ public class Section {
         return result;
     }
 
-
-    public Set<Integer> someWordsOnLine(String[] words) throws IllegalArgumentException {
+    public Set<Integer> someWordsOnLine(String[] words, Set<String> stopWords) throws IllegalArgumentException {
         if (words == null || words.length == 0) {
             throw new IllegalArgumentException();
         }
 
         Set<Integer> result = new ProbeHashSet<>();
-        for (String word: words) {
+        for (String word : words) {
+
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
+
+            if (stopWords.contains(word.toLowerCase().trim())) {
+                continue;
+            }
+
             PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
             if (positionMap != null) {
                 result.addAll(positionMap.getLineNumbers());
@@ -163,23 +199,31 @@ public class Section {
         return result;
     }
 
-    public Set<Integer> wordsNotOnLine(String[] wordsRequired, String[] wordsExcluded) throws IllegalArgumentException {
+    public Set<Integer> wordsNotOnLine(String[] wordsRequired, String[] wordsExcluded, Set<String> stopWords)
+            throws IllegalArgumentException {
         if (wordsRequired == null || wordsRequired.length == 0 || wordsExcluded == null || wordsExcluded.length == 0) {
             throw new IllegalArgumentException();
         }
 
-        for (String word: wordsRequired) {
+        for (String word : wordsRequired) {
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
         }
 
-        Set<Integer> result = wordsOnLine(wordsRequired);
+        Set<Integer> result = wordsOnLine(wordsRequired, stopWords);
 
-        for (String word: wordsExcluded) {
+        for (String word : wordsExcluded) {
+
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
+
+            if (stopWords.contains(word.toLowerCase().trim())) {
+                continue;
+            }
+
+
             PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
             if (positionMap != null) {
                 result.removeAll(positionMap.getLineNumbers());
@@ -189,18 +233,23 @@ public class Section {
         return result;
     }
 
-    public Set<Triple<Integer,Integer,String>> simpleAndSearch(String[] words)
+    public Set<Triple<Integer, Integer, String>> simpleAndSearch(String[] words, Set<String> stopWords)
             throws IllegalArgumentException {
 
         if (words == null || words.length == 0) {
             throw new IllegalArgumentException();
         }
 
-        Set<Triple<Integer,Integer,String>> result = new ProbeHashSet<>();
-        for (String word: words) {
+        Set<Triple<Integer, Integer, String>> result = new ProbeHashSet<>();
+        for (String word : words) {
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
+
+            if (stopWords.contains(word.toLowerCase().trim())) {
+                continue;
+            }
+
             PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
             if (positionMap != null) {
                 result.addAll(positionMap.getPositionTriples());
@@ -211,19 +260,25 @@ public class Section {
         return result;
     }
 
-    public Set<Triple<Integer,Integer,String>> simpleOrSearch(String[] words)
+    public Set<Triple<Integer, Integer, String>> simpleOrSearch(String[] words, Set<String> stopWords)
             throws IllegalArgumentException {
 
         if (words == null || words.length == 0) {
             throw new IllegalArgumentException();
         }
 
-        Set<Triple<Integer,Integer,String>> result = new ProbeHashSet<>();
+        Set<Triple<Integer, Integer, String>> result = new ProbeHashSet<>();
 
-        for (String word: words) {
+        for (String word : words) {
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
+
+
+            if (stopWords.contains(word.toLowerCase().trim())) {
+                continue;
+            }
+
             PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
             if (positionMap != null) {
                 result.addAll(positionMap.getPositionTriples());
@@ -232,24 +287,31 @@ public class Section {
         return result;
     }
 
-
-    public Set<Triple<Integer,Integer,String>> simpleNotSearch(String[] wordsRequired, String[] wordsExcluded)
+    public Set<Triple<Integer, Integer, String>> simpleNotSearch(String[] wordsRequired, String[] wordsExcluded, Set<String> stopWords)
             throws IllegalArgumentException {
 
         if (wordsRequired == null || wordsRequired.length == 0 || wordsExcluded == null || wordsExcluded.length == 0) {
             throw new IllegalArgumentException();
         }
 
-        for (String word: wordsRequired) {
+        for (String word : wordsRequired) {
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
         }
 
-        for (String word: wordsExcluded) {
+        for (String word : wordsExcluded) {
+
+
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
+
+
+            if (stopWords.contains(word.toLowerCase().trim())) {
+                continue;
+            }
+
 
             PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
             if (positionMap != null) {
@@ -257,23 +319,24 @@ public class Section {
             }
         }
 
-        return simpleAndSearch(wordsRequired);
+        return simpleAndSearch(wordsRequired, stopWords);
     }
 
-    public Set<Triple<Integer,Integer,String>> compoundAndOrSearch(String[] wordsRequired, String[] orWords)
+    public Set<Triple<Integer, Integer, String>>
+    compoundAndOrSearch(String[] wordsRequired, String[] orWords, Set<String> stopWords)
             throws IllegalArgumentException {
 
         if (wordsRequired == null || wordsRequired.length == 0 || orWords == null || orWords.length == 0) {
             throw new IllegalArgumentException();
         }
 
-        for (String word: wordsRequired) {
+        for (String word : wordsRequired) {
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
         }
 
-        Set<Triple<Integer,Integer,String>> result = simpleAndSearch(wordsRequired);
+        Set<Triple<Integer, Integer, String>> result = simpleAndSearch(wordsRequired, stopWords);
 
         if (result.size() == 0) {
             return new ProbeHashSet<>();
@@ -281,12 +344,18 @@ public class Section {
 
         Set<Triple<Integer, Integer, String>> orResult = new ProbeHashSet<>();
         for (String word : orWords) {
+
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
+
+            if (stopWords.contains(word.toLowerCase().trim())) {
+                continue;
+            }
+
             PositionMap positionMap = positionTrie.getElement(word.toLowerCase().trim());
             if (positionMap != null) {
-                orResult.addAll(simpleOrSearch(orWords));
+                orResult.addAll(simpleOrSearch(orWords, stopWords));
 
             }
         }
@@ -298,34 +367,6 @@ public class Section {
         result.addAll(orResult);
 
         return result;
-    }
-
-    private static Map<Integer, String> tokenizeString(String string) {
-        string = sanitizeString(string);
-        StringBuilder sb = new StringBuilder();
-        Map<Integer, String> tokens = new ProbeHashMap<>();
-        for (int i = 0; i < string.length(); i++) {
-            if (string.charAt(i) != ' ') {
-                sb.append(string.charAt(i));
-            } else {
-                if (sb.length() > 0) {
-                    tokens.put(i - sb.length() + 1, sb.toString());
-                    sb = new StringBuilder();
-                }
-            }
-            if ((i == string.length() - 1) && (sb.length() > 0)) {
-                tokens.put((i + 1) - sb.length() + 1, sb.toString());
-            }
-        }
-        return tokens;
-    }
-
-    private static String sanitizeString(String string) {
-        return string.toLowerCase().replaceAll("[^0-9a-z ']", " ").replaceAll("' | '", "  ");
-    }
-
-    private static String removeContinuousSpaces(String string) {
-        return string.toLowerCase().replaceAll(" +", " ").trim();
     }
 
 
