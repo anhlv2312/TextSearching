@@ -59,26 +59,43 @@ public class Section {
         Set<Pair<Integer, Integer>> result = new ProbeHashSet<>();
 
         String pattern = sanitizeString(phrase);
+        pattern = removeContinuousSpaces(pattern) + " ";
         String firstWord = pattern.split(" ")[0];
         PositionMap positionMap = positionTrie.getElement(firstWord);
 
+
         if (positionMap != null) {
             for (Pair<Integer, Integer> position : positionMap.getPositionPairs()) {
-                String text = lines.get(position.getLeftValue());
-                text = sanitizeString(text);
+                int lineNumber = position.getLeftValue();
+                String text = lines.get(lineNumber);
                 text = text.substring(position.getRightValue() - 1);
-                if (text.length() >= pattern.length()) {
-                    boolean match = true;
-                    for (int i = 0; i < pattern.length(); i++) {
-                        if (text.charAt(i) != pattern.charAt(i)) {
-                            match = false;
-                            break;
-                        }
-                    }
-                    if (match) {
-                        result.add(position);
+                StringBuilder sb = new StringBuilder(text);
+                while (sb.length() < pattern.length()) {
+                    lineNumber ++;
+                    String nextLine = lines.get(lineNumber);
+                    if (nextLine != null) {
+                        sb.append(" ");
+                        sb.append(nextLine.trim());
                     }
                 }
+                text = sb.toString();
+                text = sanitizeString(text);
+                text = removeContinuousSpaces(text) + " ";;
+
+                System.out.println(pattern);
+                System.out.println(text);
+                boolean match = true;
+                for (int i = 0; i < pattern.length(); i++) {
+
+                    if (text.charAt(i) != pattern.charAt(i)) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
+                    result.add(position);
+                }
+
             }
         }
         return result;
@@ -306,5 +323,10 @@ public class Section {
     private static String sanitizeString(String string) {
         return string.toLowerCase().replaceAll("[^0-9a-z ']", " ").replaceAll("' | '", "  ");
     }
+
+    private static String removeContinuousSpaces(String string) {
+        return string.toLowerCase().replaceAll(" +", " ").trim();
+    }
+
 
 }
