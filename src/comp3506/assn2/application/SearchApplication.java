@@ -13,7 +13,7 @@ public class SearchApplication {
 
     private Set<String> stopWords;
     private Map<String, Section> sections;
-    private List<Pair<String, Integer>> sectionIndexes;
+    private List<Pair<String, Integer>> indexes;
 
     public SearchApplication(String documentFileName, String indexFileName, String stopWordsFileName)
             throws FileNotFoundException, IllegalArgumentException {
@@ -21,12 +21,9 @@ public class SearchApplication {
         if (documentFileName == null || documentFileName.length() == 0) {
             throw new IllegalArgumentException();
         }
-
-
         stopWords = loadStopWords(stopWordsFileName);
-        sectionIndexes = loadSectionIndexes(indexFileName);
-        sections = loadDocument(documentFileName, indexFileName);
-
+        indexes = loadIndexes(indexFileName);
+        sections = loadDocument(documentFileName);
     }
 
     public int wordCount(String word) throws IllegalArgumentException {
@@ -89,9 +86,9 @@ public class SearchApplication {
             throws IllegalArgumentException {
 
         if (titles == null || titles.length == 0) {
-            titles = new String[sectionIndexes.size()];
+            titles = new String[indexes.size()];
             for (int i = 0; i < titles.length; i++) {
-                titles[i] = sectionIndexes.get(i).getLeftValue();
+                titles[i] = indexes.get(i).getLeftValue();
             }
         }
 
@@ -111,9 +108,9 @@ public class SearchApplication {
             throws IllegalArgumentException {
 
         if (titles == null || titles.length == 0) {
-            titles = new String[sectionIndexes.size()];
+            titles = new String[indexes.size()];
             for (int i = 0; i < titles.length; i++) {
-                titles[i] = sectionIndexes.get(i).getLeftValue();
+                titles[i] = indexes.get(i).getLeftValue();
             }
         }
 
@@ -134,9 +131,9 @@ public class SearchApplication {
             throws IllegalArgumentException {
 
         if (titles == null || titles.length == 0) {
-            titles = new String[sectionIndexes.size()];
+            titles = new String[indexes.size()];
             for (int i = 0; i < titles.length; i++) {
-                titles[i] = sectionIndexes.get(i).getLeftValue();
+                titles[i] = indexes.get(i).getLeftValue();
             }
         }
 
@@ -157,9 +154,9 @@ public class SearchApplication {
             throws IllegalArgumentException {
 
         if (titles == null || titles.length == 0) {
-            titles = new String[sectionIndexes.size()];
+            titles = new String[indexes.size()];
             for (int i = 0; i < titles.length; i++) {
-                titles[i] = sectionIndexes.get(i).getLeftValue();
+                titles[i] = indexes.get(i).getLeftValue();
             }
         }
 
@@ -175,49 +172,17 @@ public class SearchApplication {
         return result;
     }
 
-    private Map<String, Section> loadDocument(String documentFileName, String indexFileName)
-            throws FileNotFoundException {
-        Map<String, Section> sections = new ProbeHashMap<>();
 
-        int lineNumber = 0;
-        try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {
-            String line;
-            int lastLine;
-            for (int i = 0; i < sectionIndexes.size(); i++) {
-                String title = sectionIndexes.get(i).getLeftValue();
-                if (i + 1 == sectionIndexes.size()) {
-                    lastLine = -1;
-                } else {
-                    lastLine = sectionIndexes.get(i + 1).getRightValue() - 1;
-                }
-                Section section = new Section();
-
-                while ((lastLine < 0 || lineNumber < lastLine - 1)) {
-                    line = br.readLine();
-                    if (line != null) {
-                        lineNumber++;
-                        section.addLine(lineNumber, line);
-                    } else {
-                        break;
-                    }
-                }
-                sections.put(title, section);
-            }
-        } catch (IOException ex) {
-            throw new FileNotFoundException(documentFileName);
-        }
-        return sections;
-    }
-
-    private List<Pair<String, Integer>> loadSectionIndexes(String indexFileName) throws FileNotFoundException {
+    private List<Pair<String, Integer>> loadIndexes(String indexFileName) throws FileNotFoundException {
         List<Pair<String, Integer>> indexes = new ArrayList<>();
         indexes.add(new Pair<>("", 0));
         if (indexFileName != null && indexFileName.length() > 0) {
             try (BufferedReader br = new BufferedReader(new FileReader(indexFileName))) {
                 String line;
                 while ((line = br.readLine()) != null) {
-                    String title = line.split(",")[0].trim();
-                    int startLine = Integer.parseInt(line.split(",")[1].trim());
+                    int i = line.lastIndexOf(",");
+                    String title = line.substring(0, i).trim();
+                    int startLine = Integer.parseInt(line.substring(i+1).trim());
                     indexes.add(new Pair<>(title, startLine));
                 }
             } catch (IOException ex) {
@@ -240,6 +205,39 @@ public class SearchApplication {
             }
         }
         return stopWords;
+    }
+
+    private Map<String, Section> loadDocument(String documentFileName) throws FileNotFoundException {
+        Map<String, Section> sections = new ProbeHashMap<>();
+
+        int lineNumber = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {
+            String line;
+            int lastLine;
+            for (int i = 0; i < indexes.size(); i++) {
+                String title = indexes.get(i).getLeftValue();
+                if (i + 1 == indexes.size()) {
+                    lastLine = -1;
+                } else {
+                    lastLine = indexes.get(i + 1).getRightValue() - 1;
+                }
+                Section section = new Section();
+
+                while ((lastLine < 0 || lineNumber < lastLine - 1)) {
+                    line = br.readLine();
+                    if (line != null) {
+                        lineNumber++;
+                        section.addLine(lineNumber, line);
+                    } else {
+                        break;
+                    }
+                }
+                sections.put(title, section);
+            }
+        } catch (IOException ex) {
+            throw new FileNotFoundException(documentFileName);
+        }
+        return sections;
     }
 
 

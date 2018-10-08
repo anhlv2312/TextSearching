@@ -18,9 +18,11 @@ public class Trie<T> {
         TrieNode<T> current = root;
 
         // Traverse through all characters of given word
+
         for (int i = 0; i < word.length(); i++) {
             Map<Character, TrieNode<T>> children = current.getChildren();
             char ch = word.charAt(i);
+
             // If there is already a child for current character of given word
             current = children.get(ch);
             if (current == null) {

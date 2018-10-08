@@ -18,7 +18,7 @@ import java.io.FileNotFoundException;
  */
 public class AutoTester implements Search {
 
-    private SearchApplication searchApplication;
+    private SearchApplication application;
 
     /**
      * Create an object that performs search operations on a document.
@@ -37,18 +37,16 @@ public class AutoTester implements Search {
      */
     public AutoTester(String documentFileName, String indexFileName, String stopWordsFileName)
             throws FileNotFoundException, IllegalArgumentException {
-        // TODO Implement constructor to load the data from these files and
-        // TODO setup your data structures for the application.
-        searchApplication = new SearchApplication(documentFileName, indexFileName, stopWordsFileName);
+        application = new SearchApplication(documentFileName, indexFileName, stopWordsFileName);
     }
 
     public int wordCount(String word) throws IllegalArgumentException {
-        return searchApplication.wordCount(word);
+        return application.wordCount(word);
     }
 
     public List<Pair<Integer, Integer>> prefixOccurrence(String phrase) throws IllegalArgumentException {
         List<Pair<Integer, Integer>> result = new ArrayList<>();
-        for (Pair<Integer, Integer> pair: searchApplication.prefixOccurrence(phrase)) {
+        for (Pair<Integer, Integer> pair: application.prefixOccurrence(phrase)) {
             result.add(pair);
         }
         return result;
@@ -56,7 +54,7 @@ public class AutoTester implements Search {
 
     public List<Pair<Integer, Integer>> phraseOccurrence(String phrase) throws IllegalArgumentException {
         List<Pair<Integer, Integer>> result = new ArrayList<>();
-        for (Pair<Integer, Integer> pair: searchApplication.phraseOccurrence(phrase)) {
+        for (Pair<Integer, Integer> pair: application.phraseOccurrence(phrase)) {
             result.add(pair);
         }
         return result;
@@ -64,24 +62,24 @@ public class AutoTester implements Search {
 
     public List<Integer> wordsOnLine(String[] words) throws IllegalArgumentException {
         List<Integer> result = new ArrayList<>();
-        for (int lineNumber: searchApplication.wordsOnLine(words)) {
+        for (int lineNumber: application.wordsOnLine(words)) {
             result.add(lineNumber);
         }
         return result;
     }
-
 
     public List<Integer> someWordsOnLine(String[] words) throws IllegalArgumentException {
         List<Integer> result = new ArrayList<>();
-        for (int lineNumber: searchApplication.someWordsOnLine(words)) {
+        for (int lineNumber: application.someWordsOnLine(words)) {
             result.add(lineNumber);
         }
         return result;
     }
 
-    public List<Integer> wordsNotOnLine(String[] wordsRequired, String[] wordsExcluded) throws IllegalArgumentException {
+    public List<Integer> wordsNotOnLine(String[] wordsRequired, String[] wordsExcluded)
+            throws IllegalArgumentException {
         List<Integer> result = new ArrayList<>();
-        for (int lineNumber: searchApplication.wordsNotOnLine(wordsRequired, wordsExcluded)) {
+        for (int lineNumber: application.wordsNotOnLine(wordsRequired, wordsExcluded)) {
             result.add(lineNumber);
         }
         return result;
@@ -90,7 +88,7 @@ public class AutoTester implements Search {
     public List<Triple<Integer,Integer,String>> simpleAndSearch(String[] titles, String[] words)
             throws IllegalArgumentException {
         List<Triple<Integer,Integer,String>> result = new ArrayList<>();
-        for (Triple<Integer,Integer,String> triple: searchApplication.simpleAndSearch(titles, words)) {
+        for (Triple<Integer,Integer,String> triple: application.simpleAndSearch(titles, words)) {
             result.add(triple);
         }
         return result;
@@ -99,25 +97,29 @@ public class AutoTester implements Search {
     public List<Triple<Integer,Integer,String>> simpleOrSearch(String[] titles, String[] words)
             throws IllegalArgumentException {
         List<Triple<Integer,Integer,String>> result = new ArrayList<>();
-        for (Triple<Integer,Integer,String> triple: searchApplication.simpleOrSearch(titles, words)) {
+        for (Triple<Integer,Integer,String> triple: application.simpleOrSearch(titles, words)) {
             result.add(triple);
         }
         return result;
     }
 
-    public List<Triple<Integer,Integer,String>> simpleNotSearch(String[] titles, String[] wordsRequired, String[] wordsExcluded)
+    public List<Triple<Integer,Integer,String>> simpleNotSearch(String[] titles,
+                                                                String[] wordsRequired,
+                                                                String[] wordsExcluded)
             throws IllegalArgumentException {
         List<Triple<Integer,Integer,String>> result = new ArrayList<>();
-        for (Triple<Integer,Integer,String> triple: searchApplication.simpleNotSearch(titles, wordsRequired, wordsExcluded)) {
+        for (Triple<Integer,Integer,String> triple: application.simpleNotSearch(titles, wordsRequired, wordsExcluded)) {
             result.add(triple);
         }
         return result;
     }
 
-    public List<Triple<Integer,Integer,String>> compoundAndOrSearch(String[] titles, String[] wordsRequired, String[] orWords)
+    public List<Triple<Integer,Integer,String>> compoundAndOrSearch(String[] titles,
+                                                                    String[] wordsRequired,
+                                                                    String[] orWords)
             throws IllegalArgumentException {
         List<Triple<Integer,Integer,String>> result = new ArrayList<>();
-        for (Triple<Integer,Integer,String> triple: searchApplication.compoundAndOrSearch(titles, wordsRequired, orWords)) {
+        for (Triple<Integer,Integer,String> triple: application.compoundAndOrSearch(titles, wordsRequired, orWords)) {
             result.add(triple);
         }
         return result;

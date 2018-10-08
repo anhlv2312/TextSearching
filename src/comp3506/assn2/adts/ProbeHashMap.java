@@ -1,28 +1,79 @@
 package comp3506.assn2.adts;
 
+import java.util.Random;
+
 /* [1 pp. 426] */
-public class ProbeHashMap<K, V> extends AbstractHashMap<K, V> {
+public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
+
+    private int n = 0;
+    private int capacity;
+    private int prime;
+    private long scale, shift;
+
     private MapEntry<K, V>[] table;
     private MapEntry<K, V> DEFUNCT = new MapEntry<>(null, null);
 
-    public ProbeHashMap() {
-        super();
+    public ProbeHashMap(int cap, int p) {
+        prime = p;
+        capacity = cap;
+        Random rand = new Random();
+        scale = rand.nextInt(prime-1) + 1;
+        shift = rand.nextInt(prime);
+        createTable();
     }
 
     public ProbeHashMap(int cap) {
-        super(cap);
+        this(cap, 109345121);
     }
 
-    public ProbeHashMap(int cap, int p) {
-        super(cap, p);
+    public ProbeHashMap() {
+        this(17);
     }
 
-    protected void createTable() {
+    private void createTable() {
         table = (MapEntry<K, V>[]) new MapEntry[capacity];
     }
 
     private boolean isAvailable(int j) {
         return (table[j] == null || table[j] == DEFUNCT);
+    }
+
+
+    public int size() {
+        return n;
+    }
+
+    public V get(K key) {
+        return bucketGet(hashValue(key), key);
+    }
+
+    public V remove(K key) {
+        return bucketRemove(hashValue(key), key);
+    }
+
+    public V put(K key, V value) {
+        V answer = bucketPut(hashValue(key), key, value);
+        if (n > capacity / 2) {
+            resize(2 * capacity - 1);
+        }
+        return answer;
+    }
+
+    private int hashValue(K key) {
+        return (int) ((Math.abs(key.hashCode() * scale + shift) % prime) % capacity);
+    }
+
+    private void resize(int newCap) {
+        ArrayList<Entry<K, V>> buffer = new ArrayList<>(n);
+        for (Entry<K, V> e : entrySet()) {
+            buffer.add(buffer.size(), e);
+        }
+        capacity = newCap;
+        createTable();
+        n = 0;
+        for (Entry<K, V> e : buffer) {
+            put(e.getKey(), e.getValue());
+        }
     }
 
     private int findSlot(int h, K k) {
