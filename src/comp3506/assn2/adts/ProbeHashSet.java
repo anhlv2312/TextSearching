@@ -5,6 +5,8 @@ import java.util.Iterator;
 /**
  * An unordered data structure that does not contains duplicate keys
  *
+ * space Complexity: O(n) (n is the number of entry)
+ *
  * @author Vu Anh LE <vuanh.le@uq.edu.au>
  */
 public class ProbeHashSet<K> implements Set<K> {
@@ -18,6 +20,8 @@ public class ProbeHashSet<K> implements Set<K> {
     /**
      * Return the size of the Set
      *
+     * Time complexity: O(1)
+     *
      * @return size of the set
      */
     public int size() {
@@ -26,6 +30,8 @@ public class ProbeHashSet<K> implements Set<K> {
 
     /**
      * Add a key into the Set
+     *
+     * Time complexity: O(1)
      *
      * @return true if the key is added successfully, false if the key already exists
      */
@@ -41,6 +47,8 @@ public class ProbeHashSet<K> implements Set<K> {
     /**
      * Remove key from the Set
      *
+     * Time complexity: O(1)
+     *
      * @return true if the key is removed successfully, false if the key does not exists
      */
     public boolean remove(K key) {
@@ -50,6 +58,8 @@ public class ProbeHashSet<K> implements Set<K> {
     /**
      * Check if the key is in the Set or not
      *
+     * Time complexity: O(1)
+     *
      * @return true if the set contains key, false otherwise
      */
     public boolean contains(K key) {
@@ -58,6 +68,9 @@ public class ProbeHashSet<K> implements Set<K> {
 
     /**
      * Add all items in the target set to this Set
+     *
+     * Time complexity: O(n) with n is the size of the target set
+     *
      */
     public void addAll(Set<K> target) {
         for (K key : target) {
@@ -66,7 +79,10 @@ public class ProbeHashSet<K> implements Set<K> {
     }
 
     /**
-     * Remove all the items that is not in the target Set
+     * Remove all the items that is NOT in the target Set
+     *
+     * Time complexity: O(n*m) with n is the size of this set and m is the size of the target set
+     *
      */
     public void retainAll(Set<K> target) {
         for (K key : this) {
@@ -78,6 +94,9 @@ public class ProbeHashSet<K> implements Set<K> {
 
     /**
      * Remove all the items that is in the target Set
+     *
+     * Time complexity: O(n) with n is the size of the target set
+     *
      */
     public void removeAll(Set<K> target) {
         for (K key : target) {

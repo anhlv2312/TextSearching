@@ -4,6 +4,8 @@ package comp3506.assn2.adts;
 /**
  * A standard trie storing a collection of words and the elements T associated with that words
  *
+ * Space complexity: 0(n) total size of the distinct words in the document
+ *
  * @author Vu Anh LE <vuanh.le@uq.edu.au>
  */
 
@@ -17,6 +19,8 @@ public class Trie<T> {
 
     /**
      * Insert a word to the this trie
+     *
+     * Time complexity: O(n) with n is the number of characters in the word
      *
      * @param word the word to insert to the trie.
      */
@@ -50,6 +54,8 @@ public class Trie<T> {
     /**
      * Find a trie node given a word
      *
+     * Time complexity: O(n) with n is the number of characters in the word
+     *
      * @param word the word to insert to the trie.
      * @return a trie node of the word
      */
@@ -66,6 +72,8 @@ public class Trie<T> {
 
     /**
      * A recursive method to get elements of all the descendants of the current node
+     *
+     * Time complexity: O(dn) with d is the depth of subtree from current node and n is the size of the alphabet
      *
      * @param current the word to insert to the trie.
      * @param elements a reference to a list of element
@@ -84,6 +92,8 @@ public class Trie<T> {
 
     /**
      * Get all the descendants' element from a given node which represent the prefix
+     *
+     * Time complexity: O(dn) with d is the depth of subtree from current node and n is the size of the alphabet
      *
      * @param prefix the word to insert to the trie.
      * @return a trie node of the word
@@ -104,6 +114,8 @@ public class Trie<T> {
     /**
      * Set element for a word node
      *
+     * Time complexity: O(n) with n is the number of characters in word
+     *
      * @param word the word
      * @param element the element to be set
      */
@@ -119,6 +131,8 @@ public class Trie<T> {
 
     /**
      * get the element of a word node
+     *
+     * Time complexity: O(n) with n is the number of characters in word
      *
      * @param word the word that need to retrieve the element
      */

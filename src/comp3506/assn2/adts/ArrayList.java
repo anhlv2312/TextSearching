@@ -4,6 +4,11 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /* [1 pp. 260] */
+/**
+ * An Array based list
+ *
+ * Space Complexity: O(n) (n is the number of entry)
+ * */
 public class ArrayList<E> implements List<E> {
 
     public static final int CAPACITY = 16;
@@ -12,6 +17,8 @@ public class ArrayList<E> implements List<E> {
 
     /**
      * Constructor
+     *
+     * Time complexity: O(1)
      */
     public ArrayList() {
         this(CAPACITY);
@@ -19,31 +26,47 @@ public class ArrayList<E> implements List<E> {
 
     /**
      * Constructor
+     *
+     * Time complexity: O(1)
      */
     public ArrayList(int capacity) {
         data = (E[]) new Object[capacity];
     }
 
-    /** Returns the number of elements in the list. */
+    /**
+     * Returns the number of elements in the list.
+     *
+     * Time complexity: O(1)
+     */
     public int size() {
         return size;
     }
 
-    /** Returns a boolean indicating whether the list is empty. */
+    /**
+     * Returns a boolean indicating whether the list is empty.
+     *
+     * Time complexity: O(1)
+     */
     public boolean isEmpty() {
         return size == 0;
     }
 
-    /**  Returns the element of the list having index i;
+    /**
+     * Returns the element of the list having index i;
      * an error condition occurs if i is not in range [0, size( ) − 1].
+     *
+     * Time complexity: O(1) (direct access)
      */
     public E get(int i) throws IndexOutOfBoundsException {
         checkIndex(i, size);
         return data[i];
     }
 
-    /** Replaces the element at index i with e, and returns the old element that was replaced;
+    /**
+     * Replaces the element at index i with e, and returns the old element that was replaced;
      * an error condition occurs if i is not in range [0, size( ) − 1].
+     *
+     * Time complexity: O(1)
      */
     public E set(int i, E e) throws IndexOutOfBoundsException {
         checkIndex(i, size);
@@ -52,13 +75,21 @@ public class ArrayList<E> implements List<E> {
         return temp;
     }
 
-    /** Inserts a new element e into the end position of the list */
+    /**
+     * Inserts a new element e into the end position of the list
+     *
+     * Time complexity: O(1) (amortised) add into the end of the array
+     */
     public void add(E e) throws IndexOutOfBoundsException, IllegalStateException {
         add(size, e);
     }
 
-    /** Inserts a new element e into the list so that it has index i, moving all subsequent elements.
-     * one index later in the list; an error condition occurs if i is not in range [0,size()] */
+    /**
+     * Inserts a new element e into the list so that it has index i, moving all subsequent elements.
+     * one index later in the list; an error condition occurs if i is not in range [0,size()]
+     *
+     * Time complexity: O(n) have to relocate all the element from i to the end of the array
+     */
     public void add(int i, E e) throws IndexOutOfBoundsException, IllegalStateException {
         checkIndex(i, size + 1);
         if (size == data.length) {
@@ -71,8 +102,12 @@ public class ArrayList<E> implements List<E> {
         size++;
     }
 
-    /** Removes and returns the element at index i, moving all subsequent elements one index earlier in the list;
-     * an error condition occurs if i is not in range [0, size( ) − 1]. */
+    /**
+     * Removes and returns the element at index i, moving all subsequent elements one index earlier in the list;
+     * an error condition occurs if i is not in range [0, size( ) − 1].
+     *
+     * Time complexity: O(n) have to relocate all the element from i to the end of the array
+     */
     public E remove(int i) throws IndexOutOfBoundsException {
         checkIndex(i, size);
         E temp = data[i];
@@ -83,7 +118,15 @@ public class ArrayList<E> implements List<E> {
         return temp;
     }
 
-    /** Check if the index is valid or not*/
+    /**
+     * Returns an iterator of the elements of M.
+     */
+    public Iterator<E> iterator() {
+        return new ArrayIterator();
+    }
+
+
+    /** Check if the index is valid or not */
     private void checkIndex(int i, int n) throws IndexOutOfBoundsException {
         if (i < 0 || i >= n) {
             throw new IndexOutOfBoundsException("Illegal index: " + i);
@@ -98,11 +141,6 @@ public class ArrayList<E> implements List<E> {
             temp[k] = data[k];
         }
         data = temp;
-    }
-
-    /** Returns an iterator of the elements of M. */
-    public Iterator<E> iterator() {
-        return new ArrayIterator();
     }
 
     /* [1 pp. 285] */

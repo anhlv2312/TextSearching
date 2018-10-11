@@ -3,6 +3,12 @@ package comp3506.assn2.adts;
 import java.util.Random;
 
 /* [1 pp. 426] */
+
+/**
+ * ProbeHashMap class, using open addressing with linear probing
+ *
+ * Space Complexity: O(n) (n is the number of entry)
+ */
 public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
 
     private int n = 0;
@@ -16,6 +22,8 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
 
     /**
      * Constructor
+     *
+     * Time complexity: O(1)
      */
     public ProbeHashMap(int cap, int p) {
         prime = p;
@@ -28,6 +36,8 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
 
     /**
      * Constructor
+     *
+     * Time complexity: O(1)
      */
     public ProbeHashMap(int cap) {
         this(cap, 109345121);
@@ -35,6 +45,8 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
 
     /**
      * Constructor
+     *
+     * Time complexity: O(1)
      */
     public ProbeHashMap() {
         this(17);
@@ -43,6 +55,8 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
     /* [1 pp. 423] */
     /**
      * Returns the number of entries in M.
+     *
+     * Time complexity: O(1)
      */
     public int size() {
         return n;
@@ -50,6 +64,8 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
 
     /**
      * Returns the value v associated with key k, if such an entry exists; otherwise returns null.
+     *
+     * Time complexity: O(1) (Expected)
      */
     public V get(K key) {
         return bucketGet(hashValue(key), key);
@@ -57,7 +73,9 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
 
     /**
      * If M does not have an entry with key equal to k, then adds entry (k,v) to M and returns null;
-     *  else, replaces with v the existing value of the entry with key equal to k and returns the old value.
+     * else, replaces with v the existing value of the entry with key equal to k and returns the old value.
+     *
+     * Time complexity: O(1) (Expected)
      */
     public V put(K key, V value) {
         V answer = bucketPut(hashValue(key), key, value);
@@ -70,6 +88,8 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
     /**
      * Removes from M the entry with key equal to k, and returns its value;
      * if M has no such entry, then returns null.
+     *
+     * Time complexity: O(1) (Expected)
      */
     public V remove(K key) {
         return bucketRemove(hashValue(key), key);
@@ -78,6 +98,7 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
 
     /**
      * Returns an iterable collection of all key-value entries of the map.
+     *
      */
     public Iterable<Entry<K, V>> entrySet() {
         ArrayList<Entry<K, V>> buffer = new ArrayList<>();
