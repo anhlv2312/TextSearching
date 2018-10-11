@@ -6,6 +6,8 @@ import comp3506.assn2.utils.Triple;
 /**
  * Section Class that represent the sections in the section
  *
+ * Space Complexity: O(n) with n is the number of word in the section
+ *
  * @author Vu Anh LE <vuanh.le@uq.edu.au>
  */
 public class Section {
@@ -22,6 +24,8 @@ public class Section {
 
     /**
      * Add a line content into the internal map that store all the line in the section
+     *
+     * Time Complexity: O(n) with n is the number of characters in text
      *
      * @param lineNumber the index of the line
      * @param text the text
@@ -60,6 +64,8 @@ public class Section {
     /**
      * Determines the number of times the word appears in the section.
      *
+     * Time Complexity: O(1) return the size of the index table
+     *
      * @param word The word to be counted in the section.
      * @return The number of occurrences of the word in the section.
      * @throws IllegalArgumentException if word is null or an empty String.
@@ -82,6 +88,9 @@ public class Section {
     /**
      * Finds all occurrences of the phrase in the section.
      * A phrase may be a single word or a sequence of words.
+     *
+     * Time Complexity: O(nm) n is the number of occurrence of the first word in the phrase
+     * and m is the number of characters in the phrase
      *
      * @param phrase The phrase to be found in the section.
      * @return List of pairs, where each pair indicates the line and column number of each occurrence of the phrase.
@@ -161,6 +170,8 @@ public class Section {
      * A prefix is the start of a word. It can also be the complete word.
      * For example, "obscure" would be a prefix for "obscure", "obscured", "obscures" and "obscurely".
      *
+     * Time Complexity: O(n) with n number of occurrences of the word that matches the prefix
+     *
      * @param prefix The prefix of a word that is to be found in the section.
      * @return List of pairs, where each pair indicates the line and column number of each occurrence of the prefix.
      *         Returns an empty list if the prefix is not found in the section.
@@ -187,6 +198,9 @@ public class Section {
      * Searches the section for lines that contain all the words in the 'words' parameter.
      * Implements simple "and" logic when searching for the words.
      * The words do not need to be contiguous on the line.
+     *
+     * Time Complexity: O(mn) with m is the number of word in the input array
+     * and n is the number of occurrences of word, ignoring stop words only takes O(1)
      *
      * @param words Array of words to find on a single line in the section.
      * @param stopWords Set of stopWords to be ignored.
@@ -243,6 +257,8 @@ public class Section {
      * Implements simple "or" logic when searching for the words.
      * The words do not need to be contiguous on the line.
      *
+     * Time Complexity: O(n) with n is the number of occurrence, ignoring stop words only takes O(1)
+     *
      * @param words Array of words to find on a single line in the section.
      * @param stopWords Set of stopWords to be ignored.
      * @return List of line numbers on which any of the words appear in the section.
@@ -286,6 +302,9 @@ public class Section {
      * and none of the words in the 'wordsExcluded' parameter.
      * Implements simple "not" logic when searching for the words.
      * The words do not need to be contiguous on the line.
+     *
+     * Time Complexity: O(n + m) with n is number of Required words occurrence and m is the number of Excluded words
+     * occurrences, ignoring stop words only takes O(1)
      *
      * @param wordsRequired Array of words to find on a single line in the section.
      * @param wordsExcluded Array of words that must not be on the same line as 'wordsRequired'.
@@ -338,6 +357,8 @@ public class Section {
      * Implements simple "and" logic when searching for the words.
      * The words do not need to be on the same lines.
      *
+     * Time Complexity: O(n) with n is the number of occurrence, ignoring stop words only takes O(1)
+     *
      * @param words Array of words to find within a defined section in the section.
      * @param stopWords Set of stopWords to be ignored.
      * @return List of triples, where each triple indicates the line and column number and word found,
@@ -386,6 +407,8 @@ public class Section {
      * Implements simple "or" logic when searching for the words.
      * The words do not need to be on the same lines.
      *
+     * Time Complexity: O(n) with n is the number of occurrence, ignoring stop words only takes O(1)
+     *
      * @param words Array of words to find within a defined section in the section.
      * @param stopWords Set of stopWords to be ignored.
      * @return List of triples, where each triple indicates the line and column number and word found,
@@ -431,6 +454,9 @@ public class Section {
      * and none of the words in the 'wordsExcluded' parameter.
      * Implements simple "not" logic when searching for the words.
      * The words do not need to be on the same lines.
+     *
+     * Time Complexity: O(n + m) with n is number of Required words occurrence and m is the number of Excluded words
+     * occurrences, ignoring stop words only takes O(1)
      *
      * @param wordsRequired Array of words to find within a defined section in the section.
      * @param wordsExcluded Array of words that must not be in the same section as 'wordsRequired'.

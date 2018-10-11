@@ -12,6 +12,8 @@ import java.io.IOException;
 /**
  * SearchApplication class that handle all the search task
  *
+ * Space Complexity: O(n) with n is the number of word in the document
+ *
  * @author Vu Anh LE <vuanh.le@uq.edu.au>
  */
 public class SearchApplication {
@@ -20,6 +22,13 @@ public class SearchApplication {
     private Map<String, Section> sections;
     private String[] allTitles;
 
+
+    /**
+     * Constructor
+     *
+     * Time complexity: O(n) with n is the number of word in the document
+     *
+     */
     public SearchApplication(String documentFileName, String indexFileName, String stopWordsFileName)
             throws FileNotFoundException, IllegalArgumentException {
 
@@ -47,6 +56,8 @@ public class SearchApplication {
     /**
      * Determines the number of times the word appears in the document.
      *
+     * Time Complexity: O(s) with s is the number of sections
+     *
      * @param word The word to be counted in the document.
      * @return The number of occurrences of the word in the document.
      * @throws IllegalArgumentException if word is null or an empty String.
@@ -64,6 +75,9 @@ public class SearchApplication {
     /**
      * Finds all occurrences of the phrase in the document.
      * A phrase may be a single word or a sequence of words.
+     *
+     * Time Complexity: O(nm) n is the number of occurrence of the first word in the phrase
+     * and m is the number of characters in the phrase
      *
      * @param phrase The phrase to be found in the document.
      * @return List of pairs, where each pair indicates the line and column number of each occurrence of the phrase.
@@ -87,6 +101,8 @@ public class SearchApplication {
      * A prefix is the start of a word. It can also be the complete word.
      * For example, "obscure" would be a prefix for "obscure", "obscured", "obscures" and "obscurely".
      *
+     * Time Complexity: O(n) with n is the number of occurrences of the word that matches the prefix
+     *
      * @param prefix The prefix of a word that is to be found in the document.
      * @return List of pairs, where each pair indicates the line and column number of each occurrence of the prefix.
      *         Returns an empty list if the prefix is not found in the document.
@@ -108,6 +124,9 @@ public class SearchApplication {
      * Implements simple "and" logic when searching for the words.
      * The words do not need to be contiguous on the line.
      *
+     * Time Complexity: O(nms) with n is the number of time the first word of the phrase occurs
+     * m is the number of characters in the phrase and s is the number of section
+     *
      * @param words Array of words to find on a single line in the document.
      * @return List of line numbers on which all the words appear in the document.
      *         Returns an empty list if the words do not appear in any line in the document.
@@ -128,6 +147,9 @@ public class SearchApplication {
      * Searches the document for lines that contain any of the words in the 'words' parameter.
      * Implements simple "or" logic when searching for the words.
      * The words do not need to be contiguous on the line.
+     *
+     * Time Complexity: O(nms) with n is the number of time the first word of the phrase occurs
+     * m is the number of characters in the phrase and s is the number of section
      *
      * @param words Array of words to find on a single line in the document.
      * @return List of line numbers on which any of the words appear in the document.
