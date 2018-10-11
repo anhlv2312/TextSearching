@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import comp3506.assn2.adts.ProbeHashSet;
 import comp3506.assn2.adts.Trie;
 import comp3506.assn2.adts.Set;
-import comp3506.assn2.application.IndexTable;
+import comp3506.assn2.adts.IndexTable;
 import comp3506.assn2.application.SearchApplication;
 import comp3506.assn2.utils.Pair;
 import org.junit.After;

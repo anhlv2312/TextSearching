@@ -1,6 +1,5 @@
-package comp3506.assn2.application;
+package comp3506.assn2.adts;
 
-import comp3506.assn2.adts.*;
 import comp3506.assn2.utils.Pair;
 import comp3506.assn2.utils.Triple;
 
@@ -11,6 +10,7 @@ import comp3506.assn2.utils.Triple;
  */
 public class Section {
 
+    // a map that store all the line number and text of that line
     private Map<Integer, String> lines;
     // a trie that store all the position map (reversed index table) of each word
     private Trie<IndexTable> positionTrie;
@@ -70,15 +70,14 @@ public class Section {
             throw new IllegalArgumentException();
         }
 
-        int result = 0;
-
         // get the reversed index of the word
         IndexTable indexTable = positionTrie.getElement(word.toLowerCase().trim());
         if (indexTable != null) {
-            result += indexTable.size();
+            // return the number of position in index table
+            return indexTable.size();
+        } else {
+            return 0;
         }
-
-        return result;
     }
 
     /**
@@ -97,17 +96,33 @@ public class Section {
 
         Set<Pair<Integer, Integer>> result = new ProbeHashSet<>();
 
-        String pattern = sanitizeString(phrase);
-        pattern = replaceContinuousSpaces(pattern) + " ";
+        // Tokenize the phrase, remove all special characters
+        // add a space at the end to mark the end of the phrase
+        String pattern = sanitizeString(phrase) + " ";
+
+        // Remove continuous spaces from the pattern
+        pattern = replaceContinuousSpaces(pattern);
+
+        // Extract the first word of the phrase
         String firstWord = pattern.split(" ")[0];
+
+        // Get the position table of the first word
         IndexTable indexTable = positionTrie.getElement(firstWord);
 
-
         if (indexTable != null) {
+
             for (Pair<Integer, Integer> position : indexTable.getPositionPairs()) {
+
+                // get the line number of each position
                 int lineNumber = position.getLeftValue();
+
+                // get the string of the line that contains the first word
                 String text = lines.get(lineNumber);
+
+                // Remove the previous part of the text, only consider the text from the position of the word
                 text = text.substring(position.getRightValue() - 1);
+
+                // keep adding next lines text to the text if the length of text is less than the pattern
                 StringBuilder sb = new StringBuilder(text);
                 while (sb.length() < pattern.length()) {
                     lineNumber++;
@@ -118,17 +133,21 @@ public class Section {
                     }
                 }
                 text = sb.toString();
-                text = sanitizeString(text);
-                text = replaceContinuousSpaces(text) + " ";
 
+                // Sanitize the text string
+                text = sanitizeString(text + " ");
+                text = replaceContinuousSpaces(text);
+
+                // Comparing the pattern with the text char by char
                 boolean match = true;
                 for (int i = 0; i < pattern.length(); i++) {
-
                     if (text.charAt(i) != pattern.charAt(i)) {
                         match = false;
                         break;
                     }
                 }
+
+                // if they are match add the position of the first word to the result list
                 if (match) {
                     result.add(position);
                 }

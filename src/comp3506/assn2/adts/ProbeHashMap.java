@@ -95,7 +95,7 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
         return -(avail + 1);
     }
 
-    protected V bucketGet(int h, K k) {
+    private V bucketGet(int h, K k) {
         int j = findSlot(h, k);
         if (j < 0) {
             return null;
@@ -103,7 +103,7 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
         return table[j].getValue();
     }
 
-    protected V bucketPut(int h, K k, V v) {
+    private V bucketPut(int h, K k, V v) {
         int j = findSlot(h, k);
         if (j >= 0) {
             return table[j].setValue(v);
@@ -113,7 +113,7 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
         return null;
     }
 
-    protected V bucketRemove(int h, K k) {
+    private V bucketRemove(int h, K k) {
         int j = findSlot(h, k);
         if (j < 0) {
             return null;

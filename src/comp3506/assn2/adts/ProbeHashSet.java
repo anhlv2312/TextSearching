@@ -3,7 +3,8 @@ package comp3506.assn2.adts;
 import java.util.Iterator;
 
 public class ProbeHashSet<K> implements Set<K> {
-    Map<K, Boolean> table;
+
+    private Map<K, Boolean> table;
 
     public ProbeHashSet() {
         table = new ProbeHashMap<>();
