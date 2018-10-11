@@ -324,7 +324,7 @@ public class SearchApplication {
     }
 
 
-    // load the whole documents in to the data structure
+    /** load the whole documents in to the data structure */
     private Map<String, Section> loadDocument(String documentFileName, List<Pair<String, Integer>> indexes)
             throws FileNotFoundException {
         Map<String, Section> sections = new ProbeHashMap<>();
@@ -371,7 +371,7 @@ public class SearchApplication {
     }
 
 
-    // load the index file data in to a list of Pair<title, line number>
+    /** load the index file data in to a list of Pair<title, line number> */
     private List<Pair<String, Integer>> loadIndexes(String indexFileName) throws FileNotFoundException {
         List<Pair<String, Integer>> indexes = new ArrayList<>();
         // add the initial title (represent the whole document)
@@ -403,14 +403,16 @@ public class SearchApplication {
         return indexes;
     }
 
-    // load the stop words in to a set
+    /** load the stop words in to a set */
     private Set<String> loadStopWords(String stopWordsFileName) throws FileNotFoundException {
         Set<String> stopWords = new ProbeHashSet<>();
         if (stopWordsFileName != null && stopWordsFileName.length() > 0) {
+            // initialize  the file reader
             try (BufferedReader br = new BufferedReader(new FileReader(stopWordsFileName))) {
                 String line;
                 // for each line, add a word into the set
                 while ((line = br.readLine()) != null) {
+                    // add the stop word to the set
                     stopWords.add(line.toLowerCase().trim());
                 }
             } catch (IOException ex) {

@@ -65,7 +65,6 @@ public class Section {
      * @throws IllegalArgumentException if word is null or an empty String.
      */
     public int wordCount(String word) throws IllegalArgumentException {
-
         if (word == null || word.length() == 0) {
             throw new IllegalArgumentException();
         }
@@ -173,7 +172,10 @@ public class Section {
             throw new IllegalArgumentException();
         }
         Set<Pair<Integer, Integer>> result = new ProbeHashSet<>();
+
+        // Find all the descendant index table of the prefix
         for (IndexTable indexTable : positionTrie.getDescendantElements(prefix.toLowerCase().trim())) {
+            // For each possible word, add every position into the result set
             for (Pair<Integer, Integer> position : indexTable.getPositionPairs()) {
                 result.add(position);
             }
@@ -199,26 +201,35 @@ public class Section {
             throw new IllegalArgumentException();
         }
 
-        Set<Integer> result = new ProbeHashSet<>();
+        // Set the result to null to note that there is no result yet
+        Set<Integer> result = null;
 
+        // For each word
         for (String word : words) {
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
 
+            // Ignore if the word is in stopWords set
             if (stopWords.contains(word.toLowerCase().trim())) {
                 continue;
             }
 
             Set<Integer> lineNumbers;
+
+            // Get the index table of word in the Trie
             IndexTable indexTable = positionTrie.getElement(word.toLowerCase().trim());
             if (indexTable == null) {
                 return new ProbeHashSet<>();
             } else {
                 lineNumbers = indexTable.getLineNumbers();
-                if (result.size() == 0) {
-                    result = lineNumbers;
+                // If this is the first word, then initialize a new set and add all the line numbers to the result set
+                if (result == null) {
+                    result = new ProbeHashSet<>();
+                    result.addAll(lineNumbers);
                 } else {
+                    // Else there is already a set of result, then get the intersect between
+                    // the previous result set and the current set
                     result.retainAll(lineNumbers);
                 }
             }
@@ -245,19 +256,24 @@ public class Section {
             throw new IllegalArgumentException();
         }
 
+        // Initialize a new result set
         Set<Integer> result = new ProbeHashSet<>();
-        for (String word : words) {
 
+        // For each word
+        for (String word : words) {
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
 
+            // Ignore if the word is in stopWords set
             if (stopWords.contains(word.toLowerCase().trim())) {
                 continue;
             }
 
+            // Get the index table of current word
             IndexTable indexTable = positionTrie.getElement(word.toLowerCase().trim());
             if (indexTable != null) {
+                // add all the line numbers in the index table to the result set
                 result.addAll(indexTable.getLineNumbers());
             }
         }
@@ -293,21 +309,23 @@ public class Section {
             }
         }
 
+        // get all the line numbers of the line that contains wordRequired
         Set<Integer> result = wordsOnLine(wordsRequired, stopWords);
 
+        // for each word in Excluded list,
         for (String word : wordsExcluded) {
-
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
-
+            // Ignore if the word is in stopWords set
             if (stopWords.contains(word.toLowerCase().trim())) {
                 continue;
             }
 
-
+            // get the index table of current word
             IndexTable indexTable = positionTrie.getElement(word.toLowerCase().trim());
             if (indexTable != null) {
+                // remove all the line number of the line that contains that word from the result set
                 result.removeAll(indexTable.getLineNumbers());
             }
         }
@@ -316,7 +334,7 @@ public class Section {
     }
 
     /**
-     * Searches the section for sections that contain all the words in the 'words' parameter.
+     * Searches the document for sections that contain all the words in the 'words' parameter.
      * Implements simple "and" logic when searching for the words.
      * The words do not need to be on the same lines.
      *
@@ -336,20 +354,27 @@ public class Section {
             throw new IllegalArgumentException();
         }
 
+        // Initialize a new result set
         Set<Triple<Integer, Integer, String>> result = new ProbeHashSet<>();
+
+        // for each word in And word List,
         for (String word : words) {
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
 
+            // Ignore if the word is in stopWords set
             if (stopWords.contains(word.toLowerCase().trim())) {
                 continue;
             }
 
+            // get the table of the current word
             IndexTable indexTable = positionTrie.getElement(word.toLowerCase().trim());
             if (indexTable != null) {
+                // Add the word position to the result
                 result.addAll(indexTable.getPositionTriples());
             } else {
+                // If one of the word in this Section is not found then return the empty set
                 return new ProbeHashSet<>();
             }
         }
@@ -357,7 +382,7 @@ public class Section {
     }
 
     /**
-     * Searches the section for sections that contain any of the words in the 'words' parameter.
+     * Searches the document for sections that contain any of the words in the 'words' parameter.
      * Implements simple "or" logic when searching for the words.
      * The words do not need to be on the same lines.
      *
@@ -377,20 +402,24 @@ public class Section {
             throw new IllegalArgumentException();
         }
 
+        // initialize a new result set
         Set<Triple<Integer, Integer, String>> result = new ProbeHashSet<>();
 
+        // for each word in OR list
         for (String word : words) {
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
 
-
+            // Ignore if the word is in stopWords set
             if (stopWords.contains(word.toLowerCase().trim())) {
                 continue;
             }
 
+            // Get the index table of this word
             IndexTable indexTable = positionTrie.getElement(word.toLowerCase().trim());
             if (indexTable != null) {
+                // just add all the position to the result set if the index table exists
                 result.addAll(indexTable.getPositionTriples());
             }
         }
@@ -398,7 +427,7 @@ public class Section {
     }
 
     /**
-     * Searches the section for sections that contain all the words in the 'wordsRequired' parameter
+     * Searches the document for sections that contain all the words in the 'wordsRequired' parameter
      * and none of the words in the 'wordsExcluded' parameter.
      * Implements simple "not" logic when searching for the words.
      * The words do not need to be on the same lines.
@@ -417,7 +446,6 @@ public class Section {
                                                                  String[] wordsExcluded,
                                                                  Set<String> stopWords)
             throws IllegalArgumentException {
-
         if (wordsRequired == null || wordsRequired.length == 0 || wordsExcluded == null || wordsExcluded.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -428,27 +456,31 @@ public class Section {
             }
         }
 
+        // for each word in word Excluded list
         for (String word : wordsExcluded) {
-
             if (word == null || word.length() == 0) {
                 throw new IllegalArgumentException();
             }
 
+            // Ignore if the word is in stopWords set
             if (stopWords.contains(word.toLowerCase().trim())) {
                 continue;
             }
 
+            // Get the index table of this word
             IndexTable indexTable = positionTrie.getElement(word.toLowerCase().trim());
             if (indexTable != null) {
+                // if the word exists in this section then return empty list
                 return new ProbeHashSet<>();
             }
         }
 
+        // if no word in the excluded list found then return the List of word in the Word Required list
         return simpleAndSearch(wordsRequired, stopWords);
     }
 
     /**
-     * Searches the section for sections that contain all the words in the 'wordsRequired' parameter
+     * Searches the document for sections that contain all the words in the 'wordsRequired' parameter
      * and at least one of the words in the 'orWords' parameter.
      * Implements simple compound "and/or" logic when searching for the words.
      * The words do not need to be on the same lines.
@@ -478,12 +510,15 @@ public class Section {
             }
         }
 
+        // Get all the word position in the word required list
         Set<Triple<Integer, Integer, String>> result = simpleAndSearch(wordsRequired, stopWords);
 
+        // If there is no word ind AND list found then return an empty list
         if (result.size() == 0) {
             return new ProbeHashSet<>();
         }
 
+        // Initialize a new Or result
         Set<Triple<Integer, Integer, String>> orResult = new ProbeHashSet<>();
         for (String word : orWords) {
 
@@ -498,20 +533,21 @@ public class Section {
             IndexTable indexTable = positionTrie.getElement(word.toLowerCase().trim());
             if (indexTable != null) {
                 orResult.addAll(simpleOrSearch(orWords, stopWords));
-
             }
         }
 
+        // If there is no word in OR list found then return an empty list
         if (orResult.size() == 0) {
             return new ProbeHashSet<>();
+        } else {
+            // Else add all the position in the OR result to the final result
+            result.addAll(orResult);
         }
-
-        result.addAll(orResult);
 
         return result;
     }
 
-    // Split the string into word tokens
+    /** Split the string into word tokens */
     private static Map<Integer, String> tokenizeString(String string) {
         string = sanitizeString(string);
         StringBuilder sb = new StringBuilder();
@@ -540,12 +576,12 @@ public class Section {
         return tokens;
     }
 
-    // return the string that contain only alphanumerical letter and apostrophe
+    /** return the string that contain only alphanumerical letter and apostrophe */
     private static String sanitizeString(String string) {
         return string.toLowerCase().replaceAll("[^0-9a-z ']", " ").replaceAll("' | '", "  ");
     }
 
-    // return the string that has no contiguous space
+    /** return the string that has no contiguous space */
     private static String replaceContinuousSpaces(String string) {
         return string.toLowerCase().replaceAll(" +", " ").trim();
     }
