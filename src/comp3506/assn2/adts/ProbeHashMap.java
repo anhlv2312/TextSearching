@@ -11,8 +11,12 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
     private long scale, shift;
 
     private MapEntry<K, V>[] table;
+    // Define the Defunct value
     private MapEntry<K, V> DEFUNCT = new MapEntry<>(null, null);
 
+    /**
+     * Constructor
+     */
     public ProbeHashMap(int cap, int p) {
         prime = p;
         capacity = cap;
@@ -22,35 +26,39 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
         createTable();
     }
 
+    /**
+     * Constructor
+     */
     public ProbeHashMap(int cap) {
         this(cap, 109345121);
     }
 
+    /**
+     * Constructor
+     */
     public ProbeHashMap() {
         this(17);
     }
 
-    private void createTable() {
-        table = (MapEntry<K, V>[]) new MapEntry[capacity];
-    }
-
-    private boolean isAvailable(int j) {
-        return (table[j] == null || table[j] == DEFUNCT);
-    }
-
-
+    /* [1 pp. 423] */
+    /**
+     * Returns the number of entries in M.
+     */
     public int size() {
         return n;
     }
 
+    /**
+     * Returns the value v associated with key k, if such an entry exists; otherwise returns null.
+     */
     public V get(K key) {
         return bucketGet(hashValue(key), key);
     }
 
-    public V remove(K key) {
-        return bucketRemove(hashValue(key), key);
-    }
-
+    /**
+     * If M does not have an entry with key equal to k, then adds entry (k,v) to M and returns null;
+     *  else, replaces with v the existing value of the entry with key equal to k and returns the old value.
+     */
     public V put(K key, V value) {
         V answer = bucketPut(hashValue(key), key, value);
         if (n > capacity / 2) {
@@ -59,23 +67,40 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
         return answer;
     }
 
-    private int hashValue(K key) {
-        return (int) ((Math.abs(key.hashCode() * scale + shift) % prime) % capacity);
+    /**
+     * Removes from M the entry with key equal to k, and returns its value;
+     * if M has no such entry, then returns null.
+     */
+    public V remove(K key) {
+        return bucketRemove(hashValue(key), key);
     }
 
-    private void resize(int newCap) {
-        ArrayList<Entry<K, V>> buffer = new ArrayList<>(n);
-        for (Entry<K, V> e : entrySet()) {
-            buffer.add(buffer.size(), e);
+
+    /**
+     * Returns an iterable collection of all key-value entries of the map.
+     */
+    public Iterable<Entry<K, V>> entrySet() {
+        ArrayList<Entry<K, V>> buffer = new ArrayList<>();
+        for (int h = 0; h < capacity; h++) {
+            if (!isAvailable(h)) {
+                buffer.add(buffer.size(), table[h]);
+            }
         }
-        capacity = newCap;
-        createTable();
-        n = 0;
-        for (Entry<K, V> e : buffer) {
-            put(e.getKey(), e.getValue());
-        }
+        return buffer;
     }
 
+    /** Creates an empty table having length equal to current capacity. */
+    private void createTable() {
+        table = (MapEntry<K, V>[]) new MapEntry[capacity];
+    }
+
+
+    /** Returns true if location is either empty or the ”defunct” sentinel. */
+    private boolean isAvailable(int j) {
+        return (table[j] == null || table[j] == DEFUNCT);
+    }
+
+    /** Returns index with key k, or −(a+1) such that k could be added at index a. */
     private int findSlot(int h, K k) {
         int avail = -1;
         int j = h;
@@ -95,6 +120,7 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
         return -(avail + 1);
     }
 
+    /** Returns value associated with key k in bucket with hash value h, or else null. */
     private V bucketGet(int h, K k) {
         int j = findSlot(h, k);
         if (j < 0) {
@@ -103,6 +129,7 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
         return table[j].getValue();
     }
 
+    /** Associates key k with value v in bucket with hash value h; returns old value. */
     private V bucketPut(int h, K k, V v) {
         int j = findSlot(h, k);
         if (j >= 0) {
@@ -113,6 +140,7 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
         return null;
     }
 
+    /** Removes entry having key k from bucket with hash value h (if any). */
     private V bucketRemove(int h, K k) {
         int j = findSlot(h, k);
         if (j < 0) {
@@ -124,14 +152,23 @@ public class ProbeHashMap<K, V> extends AbstractMap<K, V> {
         return answer;
     }
 
-    public Iterable<Entry<K, V>> entrySet() {
-        ArrayList<Entry<K, V>> buffer = new ArrayList<>();
-        for (int h = 0; h < capacity; h++) {
-            if (!isAvailable(h)) {
-                buffer.add(buffer.size(), table[h]);
-            }
+    /** Calculate the hash value */
+    private int hashValue(K key) {
+        return (int) ((Math.abs(key.hashCode() * scale + shift) % prime) % capacity);
+    }
+
+    /** Resize the HashMap*/
+    private void resize(int newCap) {
+        ArrayList<Entry<K, V>> buffer = new ArrayList<>(n);
+        for (Entry<K, V> e : entrySet()) {
+            buffer.add(buffer.size(), e);
         }
-        return buffer;
+        capacity = newCap;
+        createTable();
+        n = 0;
+        for (Entry<K, V> e : buffer) {
+            put(e.getKey(), e.getValue());
+        }
     }
 
 }

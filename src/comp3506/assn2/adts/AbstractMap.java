@@ -5,18 +5,31 @@ import java.util.Iterator;
 /* [1 pp. 407] */
 public abstract class AbstractMap<K, V> implements Map<K, V> {
 
+    /**
+     * Returns a boolean indicating whether M is empty.
+     */
     public boolean isEmpty() {
         return size() == 0;
     }
 
+    /**
+     * Returns an iterable collection containing all the keys stored in M.
+     */
     public Iterable<K> keySet() {
         return new KeyIterable();
     }
 
+    /**
+     * Returns an iterable collection containing all the values of entries stored in M
+     * (with repetition if multiple keys map to the same value).
+     */
     public Iterable<V> values() {
         return new ValueIterable();
     }
 
+    /**
+     * The nested class that represent the Map entry
+     */
     protected static class MapEntry<K, V> implements Entry<K, V> {
         private K k;
         private V v;
@@ -45,6 +58,9 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
         }
     }
 
+    /**
+     * The nested Iterator and Iterables class
+     */
     private class KeyIterator implements Iterator<K> {
         private Iterator<Entry<K, V>> entries = entrySet().iterator();
 
@@ -57,12 +73,18 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
         }
     }
 
+    /**
+     * The nested Iterator and Iterables class
+     */
     private class KeyIterable implements Iterable<K> {
         public Iterator<K> iterator() {
             return new KeyIterator();
         }
     }
 
+    /**
+     * The nested Iterator and Iterables class
+     */
     private class ValueIterator implements Iterator<V> {
         private Iterator<Entry<K, V>> entries = entrySet().iterator();
 
@@ -75,6 +97,9 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
         }
     }
 
+    /**
+     * The nested Iterator and Iterables class
+     */
     private class ValueIterable implements Iterable<V> {
         public Iterator<V> iterator() {
             return new ValueIterator();

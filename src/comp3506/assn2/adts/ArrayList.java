@@ -10,27 +10,41 @@ public class ArrayList<E> implements List<E> {
     private E[] data;
     private int size = 0;
 
+    /**
+     * Constructor
+     */
     public ArrayList() {
         this(CAPACITY);
     }
 
+    /**
+     * Constructor
+     */
     public ArrayList(int capacity) {
         data = (E[]) new Object[capacity];
     }
 
+    /** Returns the number of elements in the list. */
     public int size() {
         return size;
     }
 
+    /** Returns a boolean indicating whether the list is empty. */
     public boolean isEmpty() {
         return size == 0;
     }
 
+    /**  Returns the element of the list having index i;
+     * an error condition occurs if i is not in range [0, size( ) − 1].
+     */
     public E get(int i) throws IndexOutOfBoundsException {
         checkIndex(i, size);
         return data[i];
     }
 
+    /** Replaces the element at index i with e, and returns the old element that was replaced;
+     * an error condition occurs if i is not in range [0, size( ) − 1].
+     */
     public E set(int i, E e) throws IndexOutOfBoundsException {
         checkIndex(i, size);
         E temp = data[i];
@@ -38,10 +52,13 @@ public class ArrayList<E> implements List<E> {
         return temp;
     }
 
+    /** Inserts a new element e into the end position of the list */
     public void add(E e) throws IndexOutOfBoundsException, IllegalStateException {
         add(size, e);
     }
 
+    /** Inserts a new element e into the list so that it has index i, moving all subsequent elements.
+     * one index later in the list; an error condition occurs if i is not in range [0,size()] */
     public void add(int i, E e) throws IndexOutOfBoundsException, IllegalStateException {
         checkIndex(i, size + 1);
         if (size == data.length) {
@@ -54,6 +71,8 @@ public class ArrayList<E> implements List<E> {
         size++;
     }
 
+    /** Removes and returns the element at index i, moving all subsequent elements one index earlier in the list;
+     * an error condition occurs if i is not in range [0, size( ) − 1]. */
     public E remove(int i) throws IndexOutOfBoundsException {
         checkIndex(i, size);
         E temp = data[i];
@@ -64,7 +83,8 @@ public class ArrayList<E> implements List<E> {
         return temp;
     }
 
-    protected void checkIndex(int i, int n) throws IndexOutOfBoundsException {
+    /** Check if the index is valid or not*/
+    private void checkIndex(int i, int n) throws IndexOutOfBoundsException {
         if (i < 0 || i >= n) {
             throw new IndexOutOfBoundsException("Illegal index: " + i);
         }
@@ -72,7 +92,7 @@ public class ArrayList<E> implements List<E> {
 
     /* [1 pp. 265] */
     /** Resize internal array to have given capacity >= size. */
-    protected void resize(int capacity) {
+    private void resize(int capacity) {
         E[] temp = (E[]) new Object[capacity];
         for (int k=0; k < size; k++) {
             temp[k] = data[k];
@@ -80,6 +100,7 @@ public class ArrayList<E> implements List<E> {
         data = temp;
     }
 
+    /** Returns an iterator of the elements of M. */
     public Iterator<E> iterator() {
         return new ArrayIterator();
     }
