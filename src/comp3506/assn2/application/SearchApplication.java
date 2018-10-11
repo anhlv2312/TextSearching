@@ -22,7 +22,6 @@ public class SearchApplication {
     private Map<String, Section> sections;
     private String[] allTitles;
 
-
     /**
      * Constructor
      *
@@ -395,6 +394,8 @@ public class SearchApplication {
 
     /** load the index file data in to a list of Pair<title, line number> */
     private List<Pair<String, Integer>> loadIndexes(String indexFileName) throws FileNotFoundException {
+
+        // We use arrayList because it reserve the ordering of titles when they are read from file
         List<Pair<String, Integer>> indexes = new ArrayList<>();
         // add the initial title (represent the whole document)
         indexes.add(new Pair<>("", 0));

@@ -73,7 +73,8 @@ public class Trie<T> {
     /**
      * A recursive method to get elements of all the descendants of the current node
      *
-     * Time complexity: O(dn) with d is the depth of subtree from current node and n is the size of the alphabet
+     * Time complexity: O(dn) with n number of character of the word and d is the size of the alphabet
+     * the two factors can be considered as constants so the time complexity can be expected as O(1)
      *
      * @param current the word to insert to the trie.
      * @param elements a reference to a list of element
@@ -93,7 +94,8 @@ public class Trie<T> {
     /**
      * Get all the descendants' element from a given node which represent the prefix
      *
-     * Time complexity: O(dn) with d is the depth of subtree from current node and n is the size of the alphabet
+     * Time complexity: O(dn) with n number of character of the word and d is the size of the alphabet
+     * the two factors can be considered as constants so the time complexity can be expected as O(1)
      *
      * @param prefix the word to insert to the trie.
      * @return a trie node of the word
