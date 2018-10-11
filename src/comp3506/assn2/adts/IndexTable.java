@@ -58,7 +58,7 @@ public class IndexTable {
     }
 
     /**
-     * Get all the position pairs
+     * Get all the position pairs (line number, column)
      *
      * @return The Set of pair that contains line and column
      */
@@ -75,7 +75,7 @@ public class IndexTable {
     }
 
     /**
-     * Get all the position triple
+     * Get all the position triple (word, line number, column)
      *
      * @return The Set of triple that contains line and column and the word itself
      */
@@ -92,13 +92,15 @@ public class IndexTable {
     }
 
     /**
-     * Get all the line number
+     * Get all the distinct line number of the lines that contain the word
      *
-     * @return The Set line number that contain the words
+     * @return The Set line number that contains the word
      */
     public Set<Integer> getLineNumbers() {
         Set<Integer> result = new ProbeHashSet<>();
+        // for each item in the key set
         for (int lineNumber : positions.keySet()) {
+            // Add it to the result set
             result.add(lineNumber);
         }
         return result;
