@@ -21,8 +21,6 @@ public class SearchApplication {
     private Set<String> stopWords;
     private Map<String, Section> sections;
     private String[] allTitles;
-    private Trie<Character> characterTrie;
-    private Map<Character, String> characterMap;
 
     /**
      * Constructor
@@ -36,9 +34,6 @@ public class SearchApplication {
         if (documentFileName == null || documentFileName.length() == 0) {
             throw new IllegalArgumentException();
         }
-
-        characterMap = generateCharacterMap();
-        characterTrie = generateCharacterTrie(characterMap);
 
         // load the index
         List<Pair<String, Integer>> indexes = loadIndexes(indexFileName);
@@ -374,7 +369,7 @@ public class SearchApplication {
                     lastLine = -1;
                 }
 
-                Section section = new Section(characterMap, characterTrie);
+                Section section = new Section();
 
                 // keep adding line to section object until reaching the last line
                 while ((lastLine < 0 || lineNumber < lastLine - 1)) {
@@ -448,48 +443,6 @@ public class SearchApplication {
             }
         }
         return stopWords;
-    }
-
-    private static Map<Character, String> generateCharacterMap() {
-        Map<Character, String> characterMap = new ProbeHashMap<>();
-        characterMap.put(' ',"0");
-        characterMap.put('e',"1001");
-        characterMap.put('t',"1010");
-        characterMap.put('r',"11000");
-        characterMap.put('s',"11001");
-        characterMap.put('i',"11010");
-        characterMap.put('n',"11011");
-        characterMap.put('h',"10001");
-        characterMap.put('o',"11101");
-        characterMap.put('a',"11110");
-        characterMap.put('c',"100000");
-        characterMap.put('u',"100001");
-        characterMap.put('l',"111001");
-        characterMap.put('f',"101100");
-        characterMap.put('m',"101101");
-        characterMap.put('y',"101110");
-        characterMap.put('d',"111111");
-        characterMap.put('v',"1011110");
-        characterMap.put('k',"1011111");
-        characterMap.put('p',"1110000");
-        characterMap.put('b',"1110001");
-        characterMap.put('g',"1111100");
-        characterMap.put('w',"1111101");
-        characterMap.put('x',"101111100");
-        characterMap.put('q',"1011111010");
-        characterMap.put('j',"10111110110");
-        characterMap.put('z',"10111110111");
-        return characterMap;
-    }
-
-
-    private static Trie<Character> generateCharacterTrie(Map<Character, String> characterMap) {
-        Trie<Character> characterTrie = new Trie<>();
-        for (Map.Entry<Character, String> entry: characterMap.entrySet()) {
-            characterTrie.insert(entry.getValue());
-            characterTrie.setElement(entry.getValue(), entry.getKey());
-        }
-        return characterTrie;
     }
 
 }

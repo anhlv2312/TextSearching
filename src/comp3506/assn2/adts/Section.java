@@ -15,18 +15,12 @@ import java.io.Serializable;
 public class Section implements Serializable {
     // a map that store all the line number and text of that line
     private Map<Integer, String> lines;
-    private Map<Integer, byte[]> encodedLines;
     // a trie that store all the position map (reversed index table) of each word
     private Trie<IndexTable> positionTrie;
-    private Trie<Character> characterTrie;
-    private Map<Character, String> characterMap;
 
-    public Section(Map<Character, String> characterMap, Trie<Character> characterTrie) {
-        this.characterMap = characterMap;
-        this.characterTrie = characterTrie;
+    public Section() {
         positionTrie = new Trie<>();
         lines = new ProbeHashMap<>();
-        encodedLines = new ProbeHashMap<>();
 
     }
 
@@ -42,8 +36,10 @@ public class Section implements Serializable {
         if (text.trim().length() == 0) {
             return;
         }
+
+        String sanitizedText = sanitizeString(text);
         // put the lineNumber and text in to the map
-        lines.put(lineNumber, text);
+        lines.put(lineNumber, sanitizedText);
 
         // generate the token to add to the trie
         Map<Integer, String> tokens = tokenizeString(text);
@@ -623,4 +619,5 @@ public class Section implements Serializable {
     private String replaceContinuousSpaces(String string) {
         return string.toLowerCase().replaceAll(" +", " ").trim();
     }
+
 }
