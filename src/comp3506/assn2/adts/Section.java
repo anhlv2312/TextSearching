@@ -3,6 +3,8 @@ package comp3506.assn2.adts;
 import comp3506.assn2.utils.Pair;
 import comp3506.assn2.utils.Triple;
 
+import java.io.Serializable;
+
 /**
  * Section Class that represent the sections in the section
  *
@@ -10,16 +12,22 @@ import comp3506.assn2.utils.Triple;
  *
  * @author Vu Anh LE <vuanh.le@uq.edu.au>
  */
-public class Section {
-
+public class Section implements Serializable {
     // a map that store all the line number and text of that line
     private Map<Integer, String> lines;
+    private Map<Integer, byte[]> encodedLines;
     // a trie that store all the position map (reversed index table) of each word
     private Trie<IndexTable> positionTrie;
+    private Trie<Character> characterTrie;
+    private Map<Character, String> characterMap;
 
-    public Section() {
+    public Section(Map<Character, String> characterMap, Trie<Character> characterTrie) {
+        this.characterMap = characterMap;
+        this.characterTrie = characterTrie;
         positionTrie = new Trie<>();
         lines = new ProbeHashMap<>();
+        encodedLines = new ProbeHashMap<>();
+
     }
 
     /**
@@ -106,10 +114,10 @@ public class Section {
 
         // Tokenize the phrase, remove all special characters
         // add a space at the end to mark the end of the phrase
-        String pattern = sanitizeString(phrase) + " ";
+        String pattern = sanitizeString(phrase);
 
         // Remove continuous spaces from the pattern
-        pattern = replaceContinuousSpaces(pattern);
+        pattern = replaceContinuousSpaces(pattern) + " ";
 
         // Extract the first word of the phrase
         String firstWord = pattern.split(" ")[0];
@@ -143,8 +151,8 @@ public class Section {
                 text = sb.toString();
 
                 // Sanitize the text string
-                text = sanitizeString(text + " ");
-                text = replaceContinuousSpaces(text);
+                text = sanitizeString(text);
+                text = replaceContinuousSpaces(text) + " ";
 
                 // Comparing the pattern with the text char by char
                 boolean match = true;
@@ -248,6 +256,10 @@ public class Section {
                 }
             }
 
+        }
+
+        if (result == null) {
+            return new ProbeHashSet<>();
         }
         return result;
     }
@@ -574,7 +586,7 @@ public class Section {
     }
 
     /** Split the string into word tokens */
-    private static Map<Integer, String> tokenizeString(String string) {
+    private Map<Integer, String> tokenizeString(String string) {
         string = sanitizeString(string);
         StringBuilder sb = new StringBuilder();
         Map<Integer, String> tokens = new ProbeHashMap<>();
@@ -603,13 +615,12 @@ public class Section {
     }
 
     /** return the string that contain only alphanumerical letter and apostrophe */
-    private static String sanitizeString(String string) {
+    private String sanitizeString(String string) {
         return string.toLowerCase().replaceAll("[^0-9a-z ']", " ").replaceAll("' | '", "  ");
     }
 
     /** return the string that has no contiguous space */
-    private static String replaceContinuousSpaces(String string) {
+    private String replaceContinuousSpaces(String string) {
         return string.toLowerCase().replaceAll(" +", " ").trim();
     }
-
 }
