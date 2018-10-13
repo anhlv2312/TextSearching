@@ -38,7 +38,7 @@ public class SearchApplication {
         this.indexFileName = indexFileName;
 
         // load the index
-        List<Pair<String, Integer>> indexes = loadIndexes(indexFileName);
+        List<Pair<String, Integer>> indexes = loadIndexes();
 
         // load stop words
         stopWords = loadStopWords(stopWordsFileName);
@@ -348,7 +348,7 @@ public class SearchApplication {
     }
 
     /** load the index file data in to a list of Pair<title, line number> */
-    private List<Pair<String, Integer>> loadIndexes(String indexFileName) throws FileNotFoundException {
+    private List<Pair<String, Integer>> loadIndexes() throws FileNotFoundException {
 
         // We use arrayList because it reserve the ordering of titles when they are read from file
         List<Pair<String, Integer>> indexes = new ArrayList<>();
