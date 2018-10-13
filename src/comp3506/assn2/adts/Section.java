@@ -12,7 +12,7 @@ import java.io.Serializable;
  *
  * @author Vu Anh LE <vuanh.le@uq.edu.au>
  */
-public class Section implements Serializable {
+public class Section {
     // a map that store all the line number and text of that line
     private Map<Integer, String> lines;
     // a trie that store all the position map (reversed index table) of each word
