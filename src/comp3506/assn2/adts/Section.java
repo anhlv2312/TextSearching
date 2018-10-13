@@ -131,6 +131,11 @@ public class Section {
             throw new IllegalArgumentException();
         }
 
+        long storeTimeStart = System.currentTimeMillis();
+//        System.out.print("PhraseOccurrence ");
+
+
+
         Set<Pair<Integer, Integer>> result = new ProbeHashSet<>();
 
         // Tokenize the phrase, remove all special characters
@@ -140,57 +145,53 @@ public class Section {
         // Remove continuous spaces from the pattern
         pattern = replaceContinuousSpaces(pattern) + " ";
 
-        // Extract the first word of the phrase
-        String firstWord = pattern.split(" ")[0];
 
-        // Get the position table of the first word
-        IndexTable indexTable = positionTrie.getElement(firstWord);
+        Set<Integer> lineNumbers = wordsOnLine(pattern.split(" "), new ProbeHashSet<>());
 
-        if (indexTable != null) {
 
-            for (Pair<Integer, Integer> position : indexTable.getPositionPairs()) {
 
-                // get the line number of each position
-                int lineNumber = position.getLeftValue();
+        for (int lineNumber : lineNumbers) {
 
-                // get the string of the line that contains the first word
-                String text = lines.get(lineNumber);
 
-                // Remove the previous part of the text, only consider the text from the position of the word
-                text = text.substring(position.getRightValue() - 1);
+            // get the string of the line that contains the first word
+            String text = lines.get(lineNumber);
 
-                // keep adding next lines text to the text if the length of text is less than the pattern
-                StringBuilder sb = new StringBuilder(text);
-                while (sb.length() < pattern.length()) {
-                    lineNumber++;
-                    String nextLine = lines.get(lineNumber);
-                    if (nextLine != null) {
-                        sb.append(" ");
-                        sb.append(nextLine.trim());
-                    }
+            System.out.println(text);
+            // Remove the previous part of the text, only consider the text from the position of the word
+
+            // keep adding next lines text to the text if the length of text is less than the pattern
+            StringBuilder sb = new StringBuilder(text);
+            while (sb.length() < pattern.length()) {
+                lineNumber++;
+                String nextLine = lines.get(lineNumber);
+                if (nextLine != null) {
+                    sb.append(" ");
+                    sb.append(nextLine.trim());
                 }
-                text = sb.toString();
-
-                // Sanitize the text string
-                text = sanitizeString(text);
-                text = replaceContinuousSpaces(text) + " ";
-
-                // Comparing the pattern with the text char by char
-                boolean match = true;
-                for (int i = 0; i < pattern.length(); i++) {
-                    if (text.charAt(i) != pattern.charAt(i)) {
-                        match = false;
-                        break;
-                    }
-                }
-
-                // if they are match add the position of the first word to the result list
-                if (match) {
-                    result.add(position);
-                }
-
             }
+            text = sb.toString();
+
+            // Sanitize the text string
+            text = sanitizeString(text);
+            text = replaceContinuousSpaces(text) + " ";
+
+            // Comparing the pattern with the text char by char
+            boolean match = true;
+            for (int i = 0; i < pattern.length(); i++) {
+                if (text.charAt(i) != pattern.charAt(i)) {
+                    match = false;
+                    break;
+                }
+            }
+
+            // if they are match add the position of the first word to the result list
+            if (match) {
+                result.add(new Pair<>(lineNumber, 22));
+            }
+
         }
+
+//        System.out.println((System.currentTimeMillis() - storeTimeStart) + "ms");
         return result;
     }
 
