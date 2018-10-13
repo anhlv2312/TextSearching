@@ -21,7 +21,18 @@ public class Section implements Serializable {
     public Section() {
         positionTrie = new Trie<>();
         lines = new ProbeHashMap<>();
+    }
 
+    public Map<Integer, String> getLines() {
+        return lines;
+    }
+
+    public Trie<IndexTable> getPositionTrie() {
+        return positionTrie;
+    }
+
+    public List<IndexTable> getIndexTables() {
+        return positionTrie.getAllElements();
     }
 
     /**
@@ -40,29 +51,33 @@ public class Section implements Serializable {
         String sanitizedText = sanitizeString(text);
         // put the lineNumber and text in to the map
         lines.put(lineNumber, sanitizedText);
+        indexLine(lineNumber, sanitizedText);
 
+
+    }
+
+    public void indexLine(int lineNumber, String sanitizedText) {
         // generate the token to add to the trie
-        Map<Integer, String> tokens = tokenizeString(text);
-
+        Map<Integer, String> tokens = tokenizeString(sanitizedText);
         // for each token in the line
         for (Map.Entry<Integer, String> token : tokens.entrySet()) {
-            int position = token.getKey();
-            String word = token.getValue();
-
-            positionTrie.insert(token.getValue());
-
-            // try to get the position map from the trie
-            IndexTable indexTable = positionTrie.getElement(word);
-
-            // if not exist then initialize a new position map
-            if (indexTable == null) {
-                indexTable = new IndexTable(word);
-                positionTrie.setElement(word, indexTable);
-            }
-
-            // add the position to position map
-            indexTable.addPosition(lineNumber, position);
+            indexWord(lineNumber, token.getKey(), token.getValue());
         }
+    }
+
+
+    public void indexWord(int lineNumber, int columnNumber, String word) {
+        positionTrie.insert(word);
+        // try to get the position map from the trie
+        IndexTable indexTable = positionTrie.getElement(word);
+
+        // if not exist then initialize a new position map
+        if (indexTable == null) {
+            indexTable = new IndexTable(word);
+            positionTrie.setElement(word, indexTable);
+        }
+        // add the position to position map
+        indexTable.addPosition(lineNumber, columnNumber);
     }
 
     /**
@@ -583,7 +598,6 @@ public class Section implements Serializable {
 
     /** Split the string into word tokens */
     private Map<Integer, String> tokenizeString(String string) {
-        string = sanitizeString(string);
         StringBuilder sb = new StringBuilder();
         Map<Integer, String> tokens = new ProbeHashMap<>();
 

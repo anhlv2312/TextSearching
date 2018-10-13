@@ -14,7 +14,7 @@ public class ManualTests {
 
     @BeforeClass
     public static void before() throws Exception {
-        searchApplication = new AutoTester("./files/shakespeare.txt", "./files/shakespeare-index.txt", "./files/stop-words.txt");
+        searchApplication = new AutoTester("./files/shakespeare.txt", "", "./files/stop-words.txt");
     }
 
     @Test

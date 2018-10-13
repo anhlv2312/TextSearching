@@ -10,16 +10,17 @@ import comp3506.assn2.application.SearchApplication;
 import comp3506.assn2.utils.Pair;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class UnitTests {
 
-    private SearchApplication search1, search2;
+    private static SearchApplication search1, search2;
 
-    @Before
-    public void before() throws Exception {
-        search1 = new SearchApplication("./files/test-input-1.txt", null, "./files/stop-words.txt");
-        search2 = new SearchApplication("./files/test-input-2.txt", null, null);
+    @BeforeClass
+    public static void before() throws Exception {
+        search1 = new SearchApplication("./files/test-input-1.txt", "", "./files/stop-words.txt");
+        search2 = new SearchApplication("./files/test-input-2.txt", "", null);
     }
 
     @After

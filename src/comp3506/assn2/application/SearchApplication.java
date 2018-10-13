@@ -4,10 +4,7 @@ import comp3506.assn2.adts.*;
 import comp3506.assn2.utils.Pair;
 import comp3506.assn2.utils.Triple;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * SearchApplication class that handle all the search task
@@ -21,6 +18,8 @@ public class SearchApplication {
     private Set<String> stopWords;
     private Map<String, Section> sections;
     private String[] allTitles;
+    private String indexFileName;
+    private String documentFileName;
 
     /**
      * Constructor
@@ -35,6 +34,9 @@ public class SearchApplication {
             throw new IllegalArgumentException();
         }
 
+        this.documentFileName = documentFileName;
+        this.indexFileName = indexFileName;
+
         // load the index
         List<Pair<String, Integer>> indexes = loadIndexes(indexFileName);
 
@@ -42,7 +44,8 @@ public class SearchApplication {
         stopWords = loadStopWords(stopWordsFileName);
 
         // load the whole document
-        sections = loadDocument(documentFileName, indexes);
+
+        sections = loadDocument(indexes, false, true);
 
         // add all titles of the document to an array
         allTitles = new String[indexes.size()];
@@ -344,61 +347,21 @@ public class SearchApplication {
         return result;
     }
 
-
-    /** load the whole documents in to the data structure */
-    private Map<String, Section> loadDocument(String documentFileName, List<Pair<String, Integer>> indexes)
-            throws FileNotFoundException {
-        Map<String, Section> sections = new ProbeHashMap<>();
-
-        int lineNumber = 0;
-        try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {
-            String line;
-            int lastLine;
-
-            // for each section in the index
-            for (int i = 0; i < indexes.size(); i++) {
-
-                String title = indexes.get(i).getLeftValue();
-
-                // determine the last line of the current section
-                if (i + 1 < indexes.size()) {
-                    // if has next section, the last line start line of the next section -1
-                    lastLine = indexes.get(i + 1).getRightValue() - 1;
-                } else {
-                    // else last line = -1
-                    lastLine = -1;
-                }
-
-                Section section = new Section();
-
-                // keep adding line to section object until reaching the last line
-                while ((lastLine < 0 || lineNumber < lastLine - 1)) {
-                    line = br.readLine();
-                    if (line != null) {
-                        lineNumber++;
-                        section.addLine(lineNumber, line);
-                    } else {
-                        break;
-                    }
-                }
-
-                // add the current section to the map
-                sections.put(title, section);
-            }
-        } catch (IOException ex) {
-            throw new FileNotFoundException(documentFileName);
-        }
-        return sections;
-    }
-
-
     /** load the index file data in to a list of Pair<title, line number> */
     private List<Pair<String, Integer>> loadIndexes(String indexFileName) throws FileNotFoundException {
 
         // We use arrayList because it reserve the ordering of titles when they are read from file
         List<Pair<String, Integer>> indexes = new ArrayList<>();
         // add the initial title (represent the whole document)
-        indexes.add(new Pair<>("", 0));
+
+        String indexTitle = indexFileName;
+
+        if (indexTitle == null || indexTitle.length() == 0) {
+            indexTitle = documentFileName;
+        }
+
+        indexTitle = indexTitle.split("\\.(?=[^\\.]+$)")[0].replaceAll("[^0-9a-z]", " ").trim().replaceAll(" ", "_");
+        indexes.add(new Pair<>(indexTitle, 0));
 
         if (indexFileName != null && indexFileName.length() > 0) {
             try (BufferedReader br = new BufferedReader(new FileReader(indexFileName))) {
@@ -443,6 +406,166 @@ public class SearchApplication {
             }
         }
         return stopWords;
+    }
+
+    /** load the whole documents in to the data structure */
+    private Map<String, Section> loadDocument(List<Pair<String, Integer>> indexes,
+                                              boolean reload,
+                                              boolean store)
+            throws FileNotFoundException {
+        Map<String, Section> sections = new ProbeHashMap<>();
+
+        double startTime = System.currentTimeMillis();
+
+        int lineNumber = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(documentFileName))) {
+            String line;
+            int lastLine;
+
+            // for each section in the index
+            for (int i = 0; i < indexes.size(); i++) {
+
+                String title = indexes.get(i).getLeftValue();
+                int startLine = indexes.get(i).getRightValue();
+
+                // determine the last line of the current section
+                if (i + 1 < indexes.size()) {
+                    // if has next section, the last line start line of the next section -1
+                    lastLine = indexes.get(i + 1).getRightValue() - 1;
+                } else {
+                    // else last line = -1
+                    lastLine = -1;
+                }
+
+                Section section = null;
+
+                File dataFile = new File(documentFileName + "." + title.toLowerCase().replaceAll("[^0-9a-z]", " ").replaceAll(" ", "_") + "."
+                        + startLine + ".data.csv");
+                File indexFile = new File(documentFileName + "." + title.toLowerCase().replaceAll("[^0-9a-z]", " ").replaceAll(" ", "_") + "."
+                        +  startLine + ".index.csv");
+
+                if (dataFile.exists() && indexFile.exists() && !reload) {
+                    long loadTimeStart = System.currentTimeMillis();
+                    System.out.print("Loading [" + title + "] ");
+                    section = loadSection(dataFile, indexFile);
+                    System.out.print((System.currentTimeMillis() - loadTimeStart) + "ms");
+                }
+
+                if (section == null) {
+                    section = new Section();
+                    long readTimeStart = System.currentTimeMillis();
+
+                    System.out.print("Reading [" + title + "] ");
+                    // keep adding line to section object until reaching the last line
+                    while ((lastLine < 0 || lineNumber < lastLine - 1)) {
+                        line = br.readLine();
+                        if (line != null) {
+                            lineNumber++;
+                            section.addLine(lineNumber, line);
+                        } else {
+                            break;
+                        }
+                    }
+                    System.out.print((System.currentTimeMillis() - readTimeStart) + "ms");
+
+                    if (store) {
+                        long storeTimeStart = System.currentTimeMillis();
+                        System.out.print(" | Storing ");
+                        storeSection(startLine, section, dataFile, indexFile);
+                        System.out.print((System.currentTimeMillis() - storeTimeStart) + "ms");
+                    }
+                }
+
+                System.out.println();
+                // add the current section to the map
+                sections.put(title, section);
+            }
+        } catch (IOException ex) {
+            throw new FileNotFoundException(documentFileName);
+        }
+
+        System.out.println(String.format("Total time: %.2f seconds", (System.currentTimeMillis() - startTime)/1000));
+        return sections;
+    }
+
+    /** Store a section to file */
+    private void storeSection(int startLine, Section section, File dataFile, File indexFile) {
+        Map<Integer, String> lines =  section.getLines();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(dataFile))){
+            for (Map.Entry<Integer, String> line : lines.entrySet()) {
+                writer.write(line.getKey() + ",");
+                writer.write(line.getValue() + "\n");
+            }
+            writer.close();
+        } catch (IOException ex) {
+            System.out.println("[ERROR] Unable to store section " + startLine);
+        }
+
+        List<IndexTable> indexTables = section.getIndexTables();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexFile))){
+            for (IndexTable table: indexTables) {
+                for (Triple<Integer, Integer, String> record : table.getPositionTriples()) {
+                    writer.write(record.getRightValue() + ",");
+                    writer.write(record.getLeftValue() + ",");
+                    writer.write(record.getCentreValue() + "\n");
+                }
+            }
+        } catch (IOException ex) {
+                System.out.println("[ERROR] Unable to store section " + startLine);
+        }
+
+    }
+
+    /** Load a section from file */
+    private Section loadSection(File dataFile, File indexFile) {
+        Section section = new Section();
+
+        Map<Integer, String> lines = section.getLines();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
+            int lineNumber;
+            String line, sanitizedText;
+            while ((line = br.readLine()) != null) {
+                try {
+                    String[] array = line.split(",");
+                    lineNumber = Integer.parseInt(array[0]);
+                    sanitizedText = array[1];
+                    lines.put(lineNumber, sanitizedText);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                    return null;
+                }
+
+            }
+
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            return null;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(indexFile))) {
+            int lineNumber, columnNumber;
+            String line, word;
+            while ((line = br.readLine()) != null) {
+                try {
+                    String[] array = line.split(",");
+                    word = array[0];
+                    lineNumber = Integer.parseInt(array[1]);
+                    columnNumber = Integer.parseInt(array[2]);
+                    section.indexWord(lineNumber, columnNumber, word);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                    return null;
+                }
+
+            }
+
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            return null;
+        }
+
+        return section;
     }
 
 }

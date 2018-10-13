@@ -96,7 +96,7 @@ public class Trie<T> {
      * Time complexity: O(dn) with n number of character of the word and d is the size of the alphabet
      *
      * @param prefix the word to insert to the trie.
-     * @return a trie node of the word
+     * @return List of Elements
      */
     public List<T> getDescendantElements(String prefix) {
         List<T> elements = new ArrayList<>();
@@ -104,6 +104,24 @@ public class Trie<T> {
         // find the node represent the prefix
         TrieNode<T> current = findNode(prefix);
 
+        // if found then call the recursive function to get all of it descendants' element
+        if (current != null) {
+            getChildElements(current, elements);
+        }
+        return elements;
+    }
+
+    /**
+     * Get all the descendants' element from root
+     *
+     * Time complexity: O(dn) with n depth of the trie and d is the size of the alphabet
+     *
+     * @return a list of all element
+     */
+    public List<T> getAllElements() {
+        List<T> elements = new ArrayList<>();
+        // find the node represent the prefix
+        TrieNode<T> current = root;
         // if found then call the recursive function to get all of it descendants' element
         if (current != null) {
             getChildElements(current, elements);
