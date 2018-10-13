@@ -23,14 +23,24 @@ public class Section implements Serializable {
         lines = new ProbeHashMap<>();
     }
 
+    /**
+     * Get the reference of the line Map
+     *
+     * Time Complexity: O(1) with n is the number of characters in text
+     *
+     * @return map of lines
+     */
     public Map<Integer, String> getLines() {
         return lines;
     }
 
-    public Trie<IndexTable> getPositionTrie() {
-        return positionTrie;
-    }
-
+    /**
+     * Get all the index table in the trie
+     *
+     * Time complexity: O(dn) with n depth of the trie and d is the size of the alphabet
+     *
+     * @return list of Index Table
+     */
     public List<IndexTable> getIndexTables() {
         return positionTrie.getAllElements();
     }
@@ -47,17 +57,9 @@ public class Section implements Serializable {
         if (text.trim().length() == 0) {
             return;
         }
-
         String sanitizedText = sanitizeString(text);
         // put the lineNumber and text in to the map
         lines.put(lineNumber, sanitizedText);
-        indexLine(lineNumber, sanitizedText);
-
-
-    }
-
-    public void indexLine(int lineNumber, String sanitizedText) {
-        // generate the token to add to the trie
         Map<Integer, String> tokens = tokenizeString(sanitizedText);
         // for each token in the line
         for (Map.Entry<Integer, String> token : tokens.entrySet()) {
@@ -65,7 +67,15 @@ public class Section implements Serializable {
         }
     }
 
-
+    /**
+     * Add a line content into the internal map that store all the line in the section
+     *
+     * Time Complexity: O(w) with w is the number of characters in word
+     *
+     * @param lineNumber the number of the line
+     * @param columnNumber the number of the column
+     * @param word to be the indexed
+     */
     public void indexWord(int lineNumber, int columnNumber, String word) {
         positionTrie.insert(word);
         // try to get the position map from the trie

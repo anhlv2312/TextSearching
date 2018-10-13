@@ -45,7 +45,7 @@ public class SearchApplication {
 
         // load the whole document
 
-        sections = loadDocument(indexes, false, true);
+        sections = loadDocument(indexes, true);
 
         // add all titles of the document to an array
         allTitles = new String[indexes.size()];
@@ -354,13 +354,16 @@ public class SearchApplication {
         List<Pair<String, Integer>> indexes = new ArrayList<>();
         // add the initial title (represent the whole document)
 
+        // Generate the index title to use as the very first section (from line 0)
         String indexTitle = indexFileName;
-
         if (indexTitle == null || indexTitle.length() == 0) {
             indexTitle = documentFileName;
         }
 
+        // Get the basename of the title and clean it
         indexTitle = indexTitle.split("\\.(?=[^\\.]+$)")[0].replaceAll("[^0-9a-z]", " ").trim().replaceAll(" ", "_");
+
+        // Add the very first index to the list (from line 0)
         indexes.add(new Pair<>(indexTitle, 0));
 
         if (indexFileName != null && indexFileName.length() > 0) {
@@ -409,12 +412,12 @@ public class SearchApplication {
     }
 
     /** load the whole documents in to the data structure */
-    private Map<String, Section> loadDocument(List<Pair<String, Integer>> indexes,
-                                              boolean reload,
-                                              boolean store)
+    private Map<String, Section> loadDocument(List<Pair<String, Integer>> indexes, boolean preprocess)
             throws FileNotFoundException {
+
         Map<String, Section> sections = new ProbeHashMap<>();
 
+        // Initial the start time to calculate run time
         double startTime = System.currentTimeMillis();
 
         int lineNumber = 0;
@@ -439,18 +442,22 @@ public class SearchApplication {
 
                 Section section = null;
 
-                File dataFile = new File(documentFileName + "." + title.toLowerCase().replaceAll("[^0-9a-z]", " ").replaceAll(" ", "_") + "."
-                        + startLine + ".data.csv");
-                File indexFile = new File(documentFileName + "." + title.toLowerCase().replaceAll("[^0-9a-z]", " ").replaceAll(" ", "_") + "."
-                        +  startLine + ".index.csv");
+                // Define the data and index files
+                File dataFile = new File(documentFileName + "." + title.toLowerCase().replaceAll("[^0-9a-z]", " ")
+                        .replaceAll(" ", "_") + "." + startLine + ".data.csv");
+                File indexFile = new File(documentFileName + "." + title.toLowerCase().replaceAll("[^0-9a-z]", " ")
+                        .replaceAll(" ", "_") + "." +  startLine + ".index.csv");
 
-                if (dataFile.exists() && indexFile.exists() && !reload) {
+                // if the datafile and index file exist the load it from file
+                if (dataFile.exists() && indexFile.exists() && preprocess) {
                     long loadTimeStart = System.currentTimeMillis();
                     System.out.print("Loading [" + title + "] ");
                     section = loadSection(dataFile, indexFile);
+                    // Print out run time
                     System.out.print((System.currentTimeMillis() - loadTimeStart) + "ms");
                 }
 
+                // if the files is not loaded then read it form document
                 if (section == null) {
                     section = new Section();
                     long readTimeStart = System.currentTimeMillis();
@@ -468,12 +475,13 @@ public class SearchApplication {
                     }
                     System.out.print((System.currentTimeMillis() - readTimeStart) + "ms");
 
-                    if (store) {
-                        long storeTimeStart = System.currentTimeMillis();
-                        System.out.print(" | Storing ");
-                        storeSection(startLine, section, dataFile, indexFile);
-                        System.out.print((System.currentTimeMillis() - storeTimeStart) + "ms");
-                    }
+                    // Store the result to files and calculate run time
+                    long storeTimeStart = System.currentTimeMillis();
+                    System.out.print(" | Storing ");
+                    storeSection(startLine, section, dataFile, indexFile);
+                    // Print out run time
+                    System.out.print((System.currentTimeMillis() - storeTimeStart) + "ms");
+
                 }
 
                 System.out.println();
@@ -490,36 +498,49 @@ public class SearchApplication {
 
     /** Store a section to file */
     private void storeSection(int startLine, Section section, File dataFile, File indexFile) {
+
+        // Store the processed line text
+
+        // get the lines map reference
         Map<Integer, String> lines =  section.getLines();
+
+        // Open the files
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(dataFile))){
             for (Map.Entry<Integer, String> line : lines.entrySet()) {
+                // Write the line number and text, separated by a comma
                 writer.write(line.getKey() + ",");
                 writer.write(line.getValue() + "\n");
             }
             writer.close();
         } catch (IOException ex) {
-            System.out.println("[ERROR] Unable to store section " + startLine);
+            System.out.println("[ERROR] Unable to store data " + startLine);
         }
 
+        // Store the inverted index table
+
+        // Get the index table
         List<IndexTable> indexTables = section.getIndexTables();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexFile))){
             for (IndexTable table: indexTables) {
+                // Fore each records
                 for (Triple<Integer, Integer, String> record : table.getPositionTriples()) {
+                    // Write the data, word, line number, columnNumber, separated by a comma
                     writer.write(record.getRightValue() + ",");
                     writer.write(record.getLeftValue() + ",");
                     writer.write(record.getCentreValue() + "\n");
                 }
             }
         } catch (IOException ex) {
-                System.out.println("[ERROR] Unable to store section " + startLine);
+            System.out.println("[ERROR] Unable to store index " + startLine);
         }
 
     }
 
-    /** Load a section from file */
+    /** Load a section from data file and index file */
     private Section loadSection(File dataFile, File indexFile) {
-        Section section = new Section();
 
+        // initialize a new section
+        Section section = new Section();
         Map<Integer, String> lines = section.getLines();
 
         try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
@@ -527,9 +548,12 @@ public class SearchApplication {
             String line, sanitizedText;
             while ((line = br.readLine()) != null) {
                 try {
+                    // Get the data
                     String[] array = line.split(",");
                     lineNumber = Integer.parseInt(array[0]);
                     sanitizedText = array[1];
+
+                    // add record to map of line
                     lines.put(lineNumber, sanitizedText);
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
@@ -537,7 +561,6 @@ public class SearchApplication {
                 }
 
             }
-
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
             return null;
@@ -548,10 +571,13 @@ public class SearchApplication {
             String line, word;
             while ((line = br.readLine()) != null) {
                 try {
+                    // Get the data
                     String[] array = line.split(",");
                     word = array[0];
                     lineNumber = Integer.parseInt(array[1]);
                     columnNumber = Integer.parseInt(array[2]);
+
+                    // index the word to the trie
                     section.indexWord(lineNumber, columnNumber, word);
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
@@ -559,7 +585,6 @@ public class SearchApplication {
                 }
 
             }
-
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
             return null;
