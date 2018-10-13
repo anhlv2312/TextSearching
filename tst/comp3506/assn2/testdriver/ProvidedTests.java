@@ -82,10 +82,10 @@ public class ProvidedTests {
 		assertThat("Search for 'obscure' returned wrong number of results.", searchResult, hasSize(obscureOccurrences.size()));
 	}
 
-	@Test(timeout=2500)
+	@Test(timeout=500)
 	public void testPhraseOccurrence_MultipleWords() {
-		List<TestingPair<Integer, Integer>> searchResult = makeTestingPair(searchApplication.phraseOccurrence("to be that is the question"));
-		assertThat("Phrase 'that is the question' was not found where expected.", searchResult, hasItem(new TestingPair<>(25779, 15)));
+		List<TestingPair<Integer, Integer>> searchResult = makeTestingPair(searchApplication.phraseOccurrence("that is the question"));
+		assertThat("Phrase 'that is the question' was not found where expected.", searchResult, hasItem(new TestingPair<>(25779, 22)));
 		assertThat("Search for 'that is the question' returned wrong number of results.", searchResult, hasSize(1));
 	}
 
