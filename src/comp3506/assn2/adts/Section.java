@@ -141,10 +141,8 @@ public class Section {
         // Tokenize the phrase, remove all special characters
         // add a space at the end to mark the end of the phrase
         String pattern = sanitizeString(phrase);
-
-        // Remove continuous spaces from the pattern
         pattern = replaceContinuousSpaces(pattern) + " ";
-
+        String firstWord = pattern.split(" ")[0];
 
         Set<Integer> lineNumbers = wordsOnLine(pattern.split(" "), new ProbeHashSet<>());
 
@@ -152,15 +150,14 @@ public class Section {
 
         for (int lineNumber : lineNumbers) {
 
-
             // get the string of the line that contains the first word
-            String text = lines.get(lineNumber);
+            String originalText = lines.get(lineNumber);
 
-            System.out.println(text);
+            System.out.println(originalText);
             // Remove the previous part of the text, only consider the text from the position of the word
 
             // keep adding next lines text to the text if the length of text is less than the pattern
-            StringBuilder sb = new StringBuilder(text);
+            StringBuilder sb = new StringBuilder(originalText);
             while (sb.length() < pattern.length()) {
                 lineNumber++;
                 String nextLine = lines.get(lineNumber);
@@ -169,24 +166,29 @@ public class Section {
                     sb.append(nextLine.trim());
                 }
             }
-            text = sb.toString();
+            String text = sb.toString();
 
             // Sanitize the text string
             text = sanitizeString(text);
             text = replaceContinuousSpaces(text) + " ";
 
-            // Comparing the pattern with the text char by char
-            boolean match = true;
-            for (int i = 0; i < pattern.length(); i++) {
-                if (text.charAt(i) != pattern.charAt(i)) {
-                    match = false;
-                    break;
-                }
-            }
+
+            
+            int firstMatch = findKMP(originalText.toCharArray(), firstWord.toCharArray());
+
+            String firstPart = text.substring(0, firstMatch);
+            String secondPart = originalText.substring(firstMatch - (firstPart.length() - replaceContinuousSpaces(firstPart).length()));
+            secondPart = replaceContinuousSpaces(secondPart) + " ";
+
+            System.out.println(secondPart + "|");
+            System.out.println(pattern + "|");
+
+            int match = findKMP(secondPart.toCharArray(), pattern.toCharArray());
 
             // if they are match add the position of the first word to the result list
-            if (match) {
-                result.add(new Pair<>(lineNumber, 22));
+            if (match == 0 ) {
+                result.add(new Pair<>(lineNumber, firstMatch + 1));
+                System.out.println(lineNumber + " " +  firstMatch + 1);
             }
 
         }
@@ -643,6 +645,49 @@ public class Section {
     /** return the string that has no contiguous space */
     private String replaceContinuousSpaces(String string) {
         return string.toLowerCase().replaceAll(" +", " ").trim();
+    }
+
+
+    public static int findKMP(char[] text, char[] pattern) {
+        int n = text.length;
+        int m = pattern.length;
+        if (m == 0) return 0;
+        int[] fail = computeFailKMP(pattern);
+        int j = 0;
+        int k = 0;
+        while (j < n) {
+            if (text[j] == pattern[k]) {
+                if (k == m - 1) {
+                    return j - m + 1;
+                }
+                j++;
+                k++;
+            } else if (k > 0) {
+                k = fail[k - 1];
+            } else {
+                j++;
+            }
+        }
+        return -1;
+    }
+
+    private static int[] computeFailKMP(char[] pattern) {
+        int m = pattern.length;
+        int[] fail = new int[m];
+        int j = 1;
+        int k = 0;
+        while (j < m) {
+            if (pattern[j] == pattern[k]) {
+                fail[j] = k + 1;
+                j++;
+                k++;
+            } else if (k > 0) {
+                k = fail[k - 1];
+            } else {
+                j++;
+            }
+        }
+        return fail;
     }
 
 }
