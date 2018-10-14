@@ -489,7 +489,8 @@ public class SearchApplication {
                     section = loadSection(dataFile, indexFile);
                     // Print out run time
                     System.out.println("Load processed data: " +
-                            (System.currentTimeMillis() - loadTimeStart) + "ms\t\t" + title);
+                            (System.currentTimeMillis() - loadTimeStart) + "ms\t "
+                             + "\t" + title);
                 }
 
                 // if the files is not loaded then read it form document
@@ -620,8 +621,8 @@ public class SearchApplication {
                     System.out.println(ex.getMessage());
                     return null;
                 }
-
             }
+            section.getIndexTables().size();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
             return null;
