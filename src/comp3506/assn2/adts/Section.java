@@ -24,9 +24,9 @@ public class Section {
     }
 
     /**
-     * Get the reference of the line Map
+     * Get the reference of the lines Map
      *
-     * Time Complexity: O(1) with n is the number of characters in text
+     * Time Complexity: O(1)
      *
      * @return map of lines
      */
@@ -46,14 +46,26 @@ public class Section {
     }
 
     /**
-     * Add a line content into the internal map that store all the line in the section
+     * Put a line in the internal map without indexing word (use for load content from pre-processing result)
+     *
+     * Time Complexity: O(n) with n is the number of characters in text
+     *
+     * @param lineNumber the index of the line
+     * @param sanitizedText the text that is satinitized
+     */
+    public void putLine(int lineNumber, String sanitizedText) {
+        lines.put(lineNumber, sanitizedText);
+    }
+
+    /**
+     * Add a line content into the internal map and index every word in that line
      *
      * Time Complexity: O(n) with n is the number of characters in text
      *
      * @param lineNumber the index of the line
      * @param text the text
      */
-    public void addLine(int lineNumber, String text) {
+    public void indexLine(int lineNumber, String text) {
         if (text.trim().length() == 0) {
             return;
         }
@@ -170,9 +182,6 @@ public class Section {
                     }
                 }
                 text = sb.toString();
-
-                // Sanitize the text string
-                text = sanitizeString(text);
                 text = replaceContinuousSpaces(text) + " ";
 
                 // Comparing the pattern with the text char by char

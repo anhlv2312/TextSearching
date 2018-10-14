@@ -487,10 +487,10 @@ public class SearchApplication {
                 // if the datafile and index file exist the load it from file
                 if (dataFile.exists() && indexFile.exists() && preprocess) {
                     long loadTimeStart = System.currentTimeMillis();
-                    System.out.print("Loading [" + title + "] ");
                     section = loadSection(dataFile, indexFile);
                     // Print out run time
-                    System.out.print((System.currentTimeMillis() - loadTimeStart) + "ms");
+                    System.out.println("Load processed data: " +
+                            (System.currentTimeMillis() - loadTimeStart) + "ms\t\t" + title);
                 }
 
                 // if the files is not loaded then read it form document
@@ -498,29 +498,29 @@ public class SearchApplication {
                     section = new Section();
                     long readTimeStart = System.currentTimeMillis();
 
-                    System.out.print("Reading [" + title + "] ");
                     // keep adding line to section object until reaching the last line
                     while ((lastLine < 0 || lineNumber < lastLine - 1)) {
                         line = br.readLine();
                         if (line != null) {
                             lineNumber++;
-                            section.addLine(lineNumber, line);
+                            section.indexLine(lineNumber, line);
                         } else {
                             break;
                         }
                     }
-                    System.out.print((System.currentTimeMillis() - readTimeStart) + "ms");
+
 
                     // Store the result to files and calculate run time
                     long storeTimeStart = System.currentTimeMillis();
-                    System.out.print(" | Storing ");
                     storeSection(startLine, section, dataFile, indexFile);
                     // Print out run time
-                    System.out.print((System.currentTimeMillis() - storeTimeStart) + "ms");
+
+                    System.out.println("Read data from file: " +
+                            (System.currentTimeMillis() - readTimeStart) + "ms\t" +
+                            "Store processed data: " +
+                            (System.currentTimeMillis() - storeTimeStart) + "ms\t\t" + title);
 
                 }
-
-                System.out.println();
                 // add the current section to the map
                 sections.put(title, section);
             }
@@ -549,7 +549,7 @@ public class SearchApplication {
             }
             writer.close();
         } catch (IOException ex) {
-            System.out.println("[ERROR] Unable to store data " + startLine);
+            System.out.println("[ERROR] Unable to store data file: " + startLine);
         }
 
         // Store the inverted index table
@@ -567,7 +567,7 @@ public class SearchApplication {
                 }
             }
         } catch (IOException ex) {
-            System.out.println("[ERROR] Unable to store index " + startLine);
+            System.out.println("[ERROR] Unable to store index file: " + startLine);
         }
 
     }
@@ -575,14 +575,11 @@ public class SearchApplication {
     /**
      * Load a section from data file and index file
      *
-     *
-     *
      * */
     private Section loadSection(File dataFile, File indexFile) {
 
         // initialize a new section
         Section section = new Section();
-        Map<Integer, String> lines = section.getLines();
 
         try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
             int lineNumber;
@@ -595,7 +592,7 @@ public class SearchApplication {
                     sanitizedText = array[1];
 
                     // add record to map of line
-                    lines.put(lineNumber, sanitizedText);
+                    section.putLine(lineNumber, sanitizedText);
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                     return null;

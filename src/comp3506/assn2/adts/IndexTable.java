@@ -7,7 +7,7 @@ import comp3506.assn2.utils.Triple;
 
 /**
  * IndexTable class which act like a multimap stores the positions of a word
- * the key is the line number and the value is the list of column
+ * the key is the line number and the value is the list of column that the word appears
  *
  * Space Complexity: O(n) with n is the number of word in the document
  *

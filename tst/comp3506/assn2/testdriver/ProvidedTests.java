@@ -189,22 +189,6 @@ public class ProvidedTests {
 	}
 
 
-	@Test(timeout=500)
-	public void testCompoundAndOrSearchEmptyOr() {
-		String [] titles = {"CYMBELINE", "THE TRAGEDY OF HAMLET", "THE FIRST PART OF KING HENRY THE FOURTH",
-				"THE SECOND PART OF KING HENRY THE SIXTH", "KING RICHARD THE SECOND", "VENUS AND ADONIS"};
-		String [] requiredWords = {"obscure", "rusty"};
-		String [] orWords = {};
-		List<TestingTriple<Integer,Integer,String>> expected = Arrays.asList(new TestingTriple<>(25300,28,"rusty"),     // Hamlet
-				new TestingTriple<>(27960,25,"obscure"),
-				new TestingTriple<>(100683,31,"rusty"),    // King Richard the Second
-				new TestingTriple<>(100957,31,"obscure"));
-		List<TestingTriple<Integer,Integer,String>> searchResult =
-				makeTestingTriple(searchApplication.compoundAndOrSearch(titles, requiredWords, orWords));
-		assertThat("Locations of 'obscure' && ('beaver' || 'hoof') were not expected.", searchResult, containsInAnyOrder(expected.toArray()));
-		assertThat("Search for 'obscure' && ('beaver' || 'hoof') returned wrong number of results.", searchResult, hasSize(expected.size()));
-	}
-
 	/**
 	 * @param data The list of Pairs to be converted to a list of TestingPairs.
 	 */
