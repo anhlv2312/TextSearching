@@ -24,7 +24,8 @@ public class SearchApplication {
     /**
      * Constructor
      *
-     * Time complexity: O(n) with n is the number of word in the document
+     * Time complexity: O(n) with n is the number of character in the document if load direct from file
+     * or O(w) with w is the number of word in document if load from pre-processed result
      *
      */
     public SearchApplication(String documentFileName, String indexFileName, String stopWordsFileName)
@@ -151,7 +152,9 @@ public class SearchApplication {
      * The words do not need to be contiguous on the line.
      *
      * Time Complexity: O(nms) with n is the number of time the first word of the phrase occurs
-     * m is the number of characters in the phrase and s is the number of section
+     * m is the number of characters in the phrase and s is the number of section (this could be
+     * improved by select the non-stop-word in the phrase instead of first word, however, it would
+     * be more complicated while doing search for phrases that lying on multiple lines)
      *
      * @param words Array of words to find on a single line in the document.
      * @return List of line numbers on which any of the words appear in the document.
@@ -174,6 +177,9 @@ public class SearchApplication {
      * and none of the words in the 'wordsExcluded' parameter.
      * Implements simple "not" logic when searching for the words.
      * The words do not need to be contiguous on the line.
+     *
+     * Time Complexity: O((n+m)s) with n is number of Required words occurrence and m is the number of Excluded words
+     * occurrences and s is the number of sections in document
      *
      * @param wordsRequired Array of words to find on a single line in the document.
      * @param wordsExcluded Array of words that must not be on the same line as 'wordsRequired'.
@@ -198,6 +204,9 @@ public class SearchApplication {
      * Searches the document for sections that contain all the words in the 'words' parameter.
      * Implements simple "and" logic when searching for the words.
      * The words do not need to be on the same lines.
+     *
+     * Time Complexity: O(ns) with n is the number of occurrence of all words,
+     * and s is the number of section titles in the array
      *
      * @param titles Array of titles of the sections to search within,
      *               the entire document is searched if titles is null or an empty array.
@@ -236,6 +245,9 @@ public class SearchApplication {
      * Implements simple "or" logic when searching for the words.
      * The words do not need to be on the same lines.
      *
+     * Time Complexity: O(ns) with n is the number of occurrence of all words,
+     * and s is the number of section titles in the array
+     *
      * @param titles Array of titles of the sections to search within,
      *               the entire document is searched if titles is null or an empty array.
      * @param words Array of words to find within a defined section in the document.
@@ -271,6 +283,9 @@ public class SearchApplication {
      * and none of the words in the 'wordsExcluded' parameter.
      * Implements simple "not" logic when searching for the words.
      * The words do not need to be on the same lines.
+     *
+     * Time Complexity: O((n+m)s) with n is the number of occurrence of all words,
+     * and s is the number of section titles in the array
      *
      * @param titles Array of titles of the sections to search within,
      *               the entire document is searched if titles is null or an empty array.
@@ -312,6 +327,9 @@ public class SearchApplication {
      * Implements simple compound "and/or" logic when searching for the words.
      * The words do not need to be on the same lines.
      *
+     * Time Complexity: O((n+m)s) with n is number of Required words occurrences and m is the number of Excluded words
+     * occurrences and s is the number of section titles in the array
+     *
      * @param titles Array of titles of the sections to search within,
      *               the entire document is searched if titles is null or an empty array.
      * @param wordsRequired Array of words to find within a defined section in the document.
@@ -347,7 +365,12 @@ public class SearchApplication {
         return result;
     }
 
-    /** load the index file data in to a list of Pair<title, line number> */
+    /**
+     * load the index file data in to a list of Pair<title, line number>
+     *
+     * Time complexity: O(s) with s is the number of section in the document
+     *
+     */
     private List<Pair<String, Integer>> loadIndexes() throws FileNotFoundException {
 
         // We use arrayList because it reserve the ordering of titles when they are read from file
@@ -392,7 +415,12 @@ public class SearchApplication {
         return indexes;
     }
 
-    /** load the stop words in to a set */
+    /**
+     * load the stop words in to a set
+     *
+     * Time complexity: O(w) with s is the number of stop word
+     *
+     * */
     private Set<String> loadStopWords(String stopWordsFileName) throws FileNotFoundException {
         Set<String> stopWords = new ProbeHashSet<>();
         if (stopWordsFileName != null && stopWordsFileName.length() > 0) {
@@ -411,7 +439,15 @@ public class SearchApplication {
         return stopWords;
     }
 
-    /** load the whole documents in to the data structure */
+    /**
+     *
+     * load the whole documents in to the data structure
+     *
+     * Time complexity: O(n) with n is the number of character in the document if load direct from file
+     * or O(w) with w is the number of word in document if load from pre-processed result
+     *
+     *
+     * */
     private Map<String, Section> loadDocument(List<Pair<String, Integer>> indexes, boolean preprocess)
             throws FileNotFoundException {
 
@@ -536,7 +572,12 @@ public class SearchApplication {
 
     }
 
-    /** Load a section from data file and index file */
+    /**
+     * Load a section from data file and index file
+     *
+     *
+     *
+     * */
     private Section loadSection(File dataFile, File indexFile) {
 
         // initialize a new section

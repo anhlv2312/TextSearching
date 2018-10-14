@@ -440,7 +440,7 @@ public class Section {
      * Implements simple "or" logic when searching for the words.
      * The words do not need to be on the same lines.
      *
-     * Time Complexity: O(n) with n is the number of occurrence, ignoring stop words only takes O(1)
+     * Time Complexity: O(n) with n is the number of occurrence of all words, ignoring stop words only takes O(1)
      *
      * @param words Array of words to find within a defined section in the section.
      * @param stopWords Set of stopWords to be ignored.
@@ -559,7 +559,7 @@ public class Section {
                                                                      Set<String> stopWords)
             throws IllegalArgumentException {
 
-        if (wordsRequired == null || wordsRequired.length == 0 || orWords == null || orWords.length == 0) {
+        if (wordsRequired == null || wordsRequired.length == 0) {
             throw new IllegalArgumentException();
         }
 
@@ -577,6 +577,10 @@ public class Section {
             return new ProbeHashSet<>();
         }
 
+        if (orWords == null || orWords.length == 0) {
+            return result;
+        }
+
         // Initialize a new Or result
         Set<Triple<Integer, Integer, String>> orResult = new ProbeHashSet<>();
         for (String word : orWords) {
@@ -585,6 +589,8 @@ public class Section {
                 throw new IllegalArgumentException();
             }
 
+
+            // Ignore stop word
             if (stopWords.contains(word.toLowerCase().trim())) {
                 continue;
             }
