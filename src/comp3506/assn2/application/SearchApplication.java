@@ -44,8 +44,8 @@ public class SearchApplication {
         // load stop words
         stopWords = loadStopWords(stopWordsFileName);
 
-        // load the whole document
-
+        // load the document preprocess = True: load from pre processed files
+        // False: load directly from the document
         sections = loadDocument(indexes, true);
 
         // add all titles of the document to an array
@@ -446,6 +446,9 @@ public class SearchApplication {
      * Time complexity: O(n) with n is the number of character in the document if load direct from file
      * or O(w) with w is the number of word in document if load from pre-processed result
      *
+     * @param indexes List of indexes
+     * @param preprocess True: load from pre processed files, False: load directly
+     *
      * */
     private Map<String, Section> loadDocument(List<Pair<String, Integer>> indexes, boolean preprocess)
             throws FileNotFoundException {
@@ -483,7 +486,7 @@ public class SearchApplication {
                 File indexFile = new File(documentFileName + "." + title.toLowerCase().replaceAll("[^0-9a-z]", " ")
                         .replaceAll(" ", "_") + "." +  startLine + ".index.csv");
 
-                // if the datafile and index file exist the load it from file
+                // if the preprocess flag is true and the datafile and index file exist then load  from file
                 if (dataFile.exists() && indexFile.exists() && preprocess) {
                     long loadTimeStart = System.currentTimeMillis();
                     section = loadSection(dataFile, indexFile);
@@ -580,6 +583,7 @@ public class SearchApplication {
         // initialize a new section
         Section section = new Section();
 
+        // Load the sanitized string from data file
         try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
             int lineNumber;
             String line, sanitizedText;
@@ -603,6 +607,7 @@ public class SearchApplication {
             return null;
         }
 
+        // Load the positions from the index file
         try (BufferedReader br = new BufferedReader(new FileReader(indexFile))) {
             int lineNumber, columnNumber;
             String line, word;
