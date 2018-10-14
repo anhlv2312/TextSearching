@@ -46,7 +46,7 @@ public class SearchApplication {
 
         // load the whole document
 
-        sections = loadDocument(indexes, false);
+        sections = loadDocument(indexes, true);
 
         // add all titles of the document to an array
         allTitles = new String[indexes.size()];
