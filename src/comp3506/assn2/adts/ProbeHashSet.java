@@ -20,7 +20,7 @@ public class ProbeHashSet<K> implements Set<K> {
     /**
      * Return the size of the Set
      *
-     * Time complexity: O(1)
+     * Time complexity: O(1) (Expected)
      *
      * @return size of the set
      */
@@ -31,7 +31,7 @@ public class ProbeHashSet<K> implements Set<K> {
     /**
      * Add a key into the Set
      *
-     * Time complexity: O(1)
+     * Time complexity: O(1) (Expected)
      *
      * @return true if the key is added successfully, false if the key already exists
      */
@@ -47,7 +47,7 @@ public class ProbeHashSet<K> implements Set<K> {
     /**
      * Remove key from the Set
      *
-     * Time complexity: O(1)
+     * Time complexity: O(1) (Expected)
      *
      * @return true if the key is removed successfully, false if the key does not exists
      */
@@ -58,7 +58,7 @@ public class ProbeHashSet<K> implements Set<K> {
     /**
      * Check if the key is in the Set or not
      *
-     * Time complexity: O(1)
+     * Time complexity: O(1) (Expected)
      *
      * @return true if the set contains key, false otherwise
      */

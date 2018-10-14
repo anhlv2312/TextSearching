@@ -3,8 +3,6 @@ package comp3506.assn2.adts;
 import comp3506.assn2.utils.Pair;
 import comp3506.assn2.utils.Triple;
 
-import java.io.Serializable;
-
 /**
  * Section Class that represent the sections in the section
  *
@@ -497,7 +495,7 @@ public class Section {
      * Implements simple "not" logic when searching for the words.
      * The words do not need to be on the same lines.
      *
-     * Time Complexity: O(n + m) with n is number of Required words occurrence and m is the number of Excluded words
+     * Time Complexity: O(n+m) with n is number of Required words occurrence and m is the number of Excluded words
      * occurrences, ignoring stop words only takes O(1)
      *
      * @param wordsRequired Array of words to find within a defined section in the section.
@@ -552,6 +550,9 @@ public class Section {
      * and at least one of the words in the 'orWords' parameter.
      * Implements simple compound "and/or" logic when searching for the words.
      * The words do not need to be on the same lines.
+     *
+     * Time Complexity: O(n+m) with n is number of Required words occurrences
+     * and m is the number of Excluded words
      *
      * @param wordsRequired Array of words to find within a defined section in the section.
      * @param orWords Array of words, of which at least one, must be in the same section as 'wordsRequired'.

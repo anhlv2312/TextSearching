@@ -446,7 +446,6 @@ public class SearchApplication {
      * Time complexity: O(n) with n is the number of character in the document if load direct from file
      * or O(w) with w is the number of word in document if load from pre-processed result
      *
-     *
      * */
     private Map<String, Section> loadDocument(List<Pair<String, Integer>> indexes, boolean preprocess)
             throws FileNotFoundException {
