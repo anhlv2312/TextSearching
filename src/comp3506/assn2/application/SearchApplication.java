@@ -46,7 +46,7 @@ public class SearchApplication {
 
         // load the whole document
 
-        sections = loadDocument(indexes, true);
+        sections = loadDocument(indexes, false);
 
         // add all titles of the document to an array
         allTitles = new String[indexes.size()];
@@ -489,8 +489,7 @@ public class SearchApplication {
                     section = loadSection(dataFile, indexFile);
                     // Print out run time
                     System.out.println("Load processed data: " +
-                            (System.currentTimeMillis() - loadTimeStart) + "ms\t "
-                             + "\t" + title);
+                            (System.currentTimeMillis() - loadTimeStart) + "ms\t" + title);
                 }
 
                 // if the files is not loaded then read it form document
@@ -518,7 +517,7 @@ public class SearchApplication {
                     System.out.println("Read data from file: " +
                             (System.currentTimeMillis() - readTimeStart) + "ms\t" +
                             "Store processed data: " +
-                            (System.currentTimeMillis() - storeTimeStart) + "ms\t\t" + title);
+                            (System.currentTimeMillis() - storeTimeStart) + "ms\t" + title);
 
                 }
                 // add the current section to the map
