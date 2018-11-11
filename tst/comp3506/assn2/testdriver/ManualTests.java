@@ -58,7 +58,7 @@ public class ManualTests {
     @Test
     public void testWordOnLine() {
         assertEquals(searchApplication.wordsOnLine(new String[]{"hymns", "heaven's"}).size(), 1);
-
+        assertEquals(searchApplication.wordsOnLine(new String[]{"to"}).size(), 0);
     }
 
     @Test
